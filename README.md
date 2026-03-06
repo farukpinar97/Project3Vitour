@@ -51,7 +51,7 @@ Frontend'de tur listesi, tur detay sayfası, rehber tanıtımları ve iletişim 
 
 ## :camera: Projenin Ekran Görüntüleri
 
-<img width="1350" height="6268" alt="01_Homepage" src="https://github.com/user-attachments/assets/c7852468-d363-4afb-94c1-660d3ce22612" />
+<img alt="01_Homepage" src="https://github.com/user-attachments/assets/c7852468-d363-4afb-94c1-660d3ce22612" />
 
 <img width="1350" height="1848" alt="02_Homepage_en" src="https://github.com/user-attachments/assets/4f7e0f16-cb89-4021-9c21-f3f09d6a2d44" />
 
