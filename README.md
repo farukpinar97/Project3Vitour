@@ -48,6 +48,7 @@ Frontend'de tur listesi, tur detay sayfası, rehber tanıtımları ve iletişim 
 | **Font Awesome** | İkon kütüphanesi |
 | **Bootstrap** | Responsive tasarım |
 | **Anthropic Claude API** | AI destekli yorum moderasyonu (otomatik içerik analizi) |
+| **ASP.NET Core Localization** | Çok dilli destek (Türkçe, İngilizce, Almanca) |
 
 ## :camera: Projenin Ekran Görüntüleri
 
