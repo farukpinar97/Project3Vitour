@@ -1,0 +1,24 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<section class="mt--60 z-index3 relative">
+    <div class="tf-container">
+        <div class="callt-to-action flex-two overflow-hidden relative">
+            <div class="callt-to-action-content flex-three">
+                <div class="image">
+                    <img src="/vitour/assets/images/page/ready.png" alt="Görsel">
+                </div>
+                <div class="content">
+                    <h2 class="title-call">@Localizer["Ready_Title"]</h2>
+                    <p class="des">@Localizer["Ready_SubTitle"]</p>
+                </div>
+            </div>
+            <img src="/vitour/assets/images/page/vector4.png" alt="" class="shape-ab">
+            <div class="callt-to-action-button">
+                <a href="/Contact/Index/" class="get-call">@Localizer["Ready_Contact"]</a>
+            </div>
+            <img src="/vitour/assets/images/page/mask-cta.png" alt="görsel" class="mask-cta">
+        </div>
+    </div>
+
+</section>

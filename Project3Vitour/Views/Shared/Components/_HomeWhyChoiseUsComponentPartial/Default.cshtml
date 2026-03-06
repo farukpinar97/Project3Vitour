@@ -1,0 +1,90 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<section class="widget-feature2">
+    <div class="tf-container full">
+        <div class="row">
+            <div class="col-md-12 col-xl-5 relative ">
+                <div class="image-feature2 relative overflow-hidden">
+                    <img src="https://themesflat.co/html/vitour/assets/images/page/travelling.jpg" alt="">
+                    <img src="/vitour/assets/images/page/mask-cta.png" alt="görsel" class="mask-ft-bottom">
+                    <img src="/vitour/assets/images/page/mask-ft-right.png" alt="görsel" class="mask-ft-right">
+                </div>
+                <div class="exploring flex-five center">
+                    <span class="font-yes text-white ">
+                        @Localizer["Badge_NeverStopExploring"]
+                    </span>
+                </div>
+
+            </div>
+            <div class="col-md-12 col-xl-7">
+                <div class="content-feature2">
+                    <div class="mb-60">
+                        <span class="sub-title-heading text-second font-yes fs-28-46 wow fadeInUp animated">
+                            @Localizer["SubHeading_DiscoverWorld"]
+                        </span>
+                        <h2 class="title-heading mb-18 wow fadeInUp animated">
+                            <span class="text-main font-yes">@Localizer["Title_Adventure"]</span> @Localizer["Title_WhyChooseUs"]
+                        </h2>
+                        <p class="des wow fadeInUp animated">
+                            @Localizer["Description_Welcome"]
+                        </p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="cheackmark flex mb-70">
+                                <div class="icon flex-five">
+                                    <i class="icon-plane-1"></i>
+                                </div>
+                                <div class="content">
+                                    <h5 class="mb-15 wow fadeInUp animated"><a href="#">@Localizer["Feature_SafetyFirst_Title"]</a></h5>
+                                    <p class="des wow fadeInUp animated">
+                                        @Localizer["Feature_SafetyFirst_Desc"]
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="cheackmark flex">
+                                <div class="icon flex-five">
+                                    <i class="icon-hiking-1-1"></i>
+                                </div>
+                                <div class="content">
+                                    <h5 class="mb-15 wow fadeInUp animated"><a href="#">@Localizer["Feature_Affordable_Title"]</a></h5>
+                                    <p class="des wow fadeInUp animated">
+                                        @Localizer["Feature_Affordable_Desc"]
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cheackmark flex mb-70">
+                                <div class="icon flex-five">
+                                    <i class="icon-price-tag-1"></i>
+                                </div>
+                                <div class="content">
+                                    <h5 class="mb-15 wow fadeInUp animated"><a href="#">@Localizer["Feature_Affordable_Title"]</a></h5>
+                                    <p class="des wow fadeInUp animated">
+                                        @Localizer["Feature_Affordable_Desc"]
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="cheackmark flex">
+                                <div class="icon flex-five">
+                                    <i class="icon-guide-1-1"></i>
+                                </div>
+                                <div class="content">
+                                    <h5 class="mb-15 wow fadeInUp animated"><a href="#">@Localizer["Feature_Guide_Title"]</a></h5>
+                                    <p class="des wow fadeInUp animated">
+                                        @Localizer["Feature_Guide_Desc"]
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>

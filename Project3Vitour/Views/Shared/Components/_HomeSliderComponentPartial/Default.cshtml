@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<section class="overflow-hidden">
+    <div class="slider-home3 flex">
+        <div class="slider-home3-content">
+            <span class="sub-title font-yes text-second fs-28-46 wow fadeInUp animated">
+                @Localizer["Slider_SubTitle"]
+            </span>
+            <h1 class="title-slide  mb-40 wow fadeInUp animated">
+                @Localizer["Slider_Title1"]
+                <span class="booking-title">
+                    <span class="booking">@Localizer["Slider_Title2"]<span class="dot"></span></span>
+                </span>
+                @Localizer["Slider_Title3"]
+            </h1>
+            <p class="des mb-45 wow fadeInUp animated">
+                @Localizer["Slider_Description"]
+            </p>
+            <div class="btn-group">
+                <a href="/Tour/TourList/" class="btn-main wow fadeInUp animated">
+                    <p class="btn-main-text">@Localizer["Slider_Button_ViewTours"]</p>
+                    <p class="iconer">
+                        <i class="icon-arrow-right"></i>
+                    </p>
+                </a>
+                <a href="/Contact/Index/" class="btn-w-wa text-black wow fadeInUp animated">
+                    @Localizer["Slider_Button_ContactUs"] <i class="icon-Group-13"></i>
+                </a>
+            </div>
+        </div>
+        <div class="slider-home3-image">
+            <img src="https://themesflat.co/html/vitour/assets/images/slide/slide3.jpg" alt="">
+        </div>
+    </div>
+</section>

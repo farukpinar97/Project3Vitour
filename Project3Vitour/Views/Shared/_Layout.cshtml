@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+@await Component.InvokeAsync("_TourHeadComponentPartial")
+<body class="body header-fixed">
+    <div class="preload preload-container">
+        <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
+            <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20"
+                    stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
+            <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke="#000" stroke-width="20"
+                    stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
+            <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke="#000" stroke-width="20"
+                    stroke-dasharray="0 440" stroke-linecap="round"></circle>
+            <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke="#000" stroke-width="20"
+                    stroke-dasharray="0 440" stroke-linecap="round"></circle>
+        </svg>
+    </div>
+
+    <div id="wrapper">
+        <div id="pagee" class="clearfix">
+
+            @await Component.InvokeAsync("_TourHeaderComponentPartial")
+
+            <main id="main">
+                @RenderBody()
+            </main>
+
+            @await Component.InvokeAsync("_TourFooterComponentPartial")
+
+        </div>
+    </div>
+
+    <a id="scroll-top" class="button-go"></a>
+    <script src="~/vitour/app/js/jquery.min.js"></script>
+    <script src="~/vitour/app/js/jquery.nice-select.min.js"></script>
+    <script src="~/vitour/app/js/bootstrap.min.js"></script>
+    <script src="~/vitour/app/js/swiper-bundle.min.js"></script>
+    <script src="~/vitour/app/js/swiper.js"></script>
+    <script src="~/vitour/app/js/plugin.js"></script>
+    <script src="~/vitour/app/js/jquery.fancybox.js"></script>
+    <script src="~/vitour/app/js/price-ranger.js"></script>
+    <script src="~/vitour/app/js/shortcodes.js"></script>
+    <script src="~/vitour/app/js/main.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

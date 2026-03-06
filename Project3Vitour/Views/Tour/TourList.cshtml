@@ -1,0 +1,23 @@
+﻿@{
+    Layout = "_Layout";
+    int currentPage = int.TryParse(Context.Request.Query["page"], out int p) ? p : 1;
+    string currentSort = Context.Request.Query["sort"].ToString() ?? "";
+    string location = Context.Request.Query["location"].ToString() ?? "";
+    int minPrice = int.TryParse(Context.Request.Query["minPrice"], out int minP) ? minP : 0;
+    int maxPrice = int.TryParse(Context.Request.Query["maxPrice"], out int maxP) ? maxP : 0;
+    int minDay = int.TryParse(Context.Request.Query["minDay"], out int minD) ? minD : 0;
+    int maxDay = int.TryParse(Context.Request.Query["maxDay"], out int maxD) ? maxD : 0;
+    int guests = int.TryParse(Context.Request.Query["guests"], out int g) ? g : 0;
+}
+@await Component.InvokeAsync("_TourBreadcumbComponentPartial")
+@await Component.InvokeAsync("_TourWidgetSelectComponentPartial")
+@await Component.InvokeAsync("_AllTourListComponentPartial", new {
+page = currentPage,
+    sort = currentSort,
+    location = location,
+    minPrice = minPrice,
+    maxPrice = maxPrice,
+    minDay = minDay,
+    maxDay = maxDay,
+    guests = guests
+})

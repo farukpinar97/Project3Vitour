@@ -1,0 +1,50 @@
+﻿@using Project3Vitour.Dtos.CategoryDtos
+@model UpdateCategoryDto
+@{
+    ViewBag.Title = "Kategori Düzenle";
+    ViewBag.ActiveMenu = "categories";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <i class="fa-solid fa-pen" style="color:var(--primary); margin-right:8px;"></i>
+                    Kategori Düzenle
+                </span>
+                <a asp-area="Admin" asp-controller="AdminCategory" asp-action="Index" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-arrow-left"></i> Geri
+                </a>
+            </div>
+            <div class="card-body" style="padding:30px;">
+                <form asp-action="Update" asp-controller="AdminCategory" asp-area="Admin" method="post">
+                    <input type="hidden" name="CategoryID" value="@Model.CategoryID">
+                    <div style="margin-bottom:20px;">
+                        <label style="font-size:13px; font-weight:600; margin-bottom:8px; display:block;">
+                            Kategori Adı <span style="color:#ef4444;">*</span>
+                        </label>
+                        <input type="text" name="CategoryName" value="@Model.CategoryName"
+                               class="form-control" placeholder="Kategori adını girin..." required>
+                    </div>
+                    <div style="margin-bottom:28px;">
+                        <label style="font-size:13px; font-weight:600; margin-bottom:8px; display:block;">Durum</label>
+                        <div style="display:flex; gap:16px;">
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                <input type="radio" name="CategoryStatus" value="true"
+                                       @(Model.CategoryStatus ? "checked" : "")> Aktif
+                            </label>
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                <input type="radio" name="CategoryStatus" value="false"
+                                       @(!Model.CategoryStatus ? "checked" : "")> Pasif
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">
+                        <i class="fa-solid fa-check"></i> Güncelle
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,819 @@
+﻿@using Project3Vitour.Dtos.TourDtos
+@model CreateTourDto
+@{
+    ViewBag.Title = "Yeni Tur Ekle";
+    ViewBag.ActiveMenu = "tours";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--navy, #1a2e44);
+            margin: 0;
+        }
+
+        .page-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 4px 0 0;
+        }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+        .form-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .form-grid.cols-4 {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+
+        .form-grid.cols-1 {
+            grid-template-columns: 1fr;
+        }
+
+    .span-2 {
+        grid-column: span 2;
+    }
+
+    .section-card {
+        background: #fff;
+        border: 1px solid var(--border, #e5e7eb);
+        border-radius: 16px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+
+    .section-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border, #e5e7eb);
+        background: #fafafa;
+    }
+
+        .section-card-header .icon-wrap {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--primary-bg, #f0fdf4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--primary, #1a7f5a);
+            flex-shrink: 0;
+        }
+
+        .section-card-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy, #1a2e44);
+            margin: 0;
+        }
+
+        .section-card-header p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 2px 0 0;
+        }
+
+    .section-card-body {
+        padding: 24px;
+    }
+
+    .field-label {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--text-main, #374151);
+        margin-bottom: 6px;
+    }
+
+    .field-hint {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        display: block;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid var(--border, #e5e7eb);
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-family: inherit;
+        color: var(--text-main);
+        background: #fff;
+        outline: none;
+        transition: border-color .15s, box-shadow .15s;
+        box-sizing: border-box;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary, #1a7f5a);
+            box-shadow: 0 0 0 3px rgba(26,127,90,.1);
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Badge Picker */
+    .badge-picker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .badge-opt {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 20px;
+        border: 1.5px solid var(--border, #e5e7eb);
+        cursor: pointer;
+        font-size: 12.5px;
+        font-weight: 600;
+        transition: all .2s;
+        color: var(--text-muted);
+        user-select: none;
+    }
+
+        .badge-opt:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .badge-opt.sel {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .badge-opt input {
+            display: none;
+        }
+
+    /* Toggle */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+        cursor: pointer;
+    }
+
+    .toggle-info {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .toggle-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    .toggle-track {
+        width: 44px;
+        height: 24px;
+        background: #d1d5db;
+        border-radius: 12px;
+        position: relative;
+        transition: background .3s;
+        flex-shrink: 0;
+    }
+
+    .toggle-thumb {
+        width: 18px;
+        height: 18px;
+        background: #fff;
+        border-radius: 50%;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform .3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+
+    #statusToggle:checked ~ .toggle-track {
+        background: var(--primary);
+    }
+
+        #statusToggle:checked ~ .toggle-track .toggle-thumb {
+            transform: translateX(20px);
+        }
+
+    #statusToggle {
+        display: none;
+    }
+
+    /* Cover preview */
+    .cover-preview-box {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: 13px;
+        overflow: hidden;
+        position: relative;
+        background: #f8fafc;
+        transition: border-color .2s;
+    }
+
+        .cover-preview-box.has-img {
+            border-style: solid;
+            border-color: var(--primary);
+        }
+
+        .cover-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            position: absolute;
+            inset: 0;
+        }
+
+        .cover-preview-box .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+    /* Gallery grid */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .gallery-item {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        height: 70px;
+    }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    /* Day Plan */
+    .day-card {
+        background: #f8fafc;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 12px;
+        position: relative;
+    }
+
+    .day-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+
+    .day-badge {
+        background: var(--primary);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 14px;
+        border-radius: 20px;
+    }
+
+    .btn-remove-day {
+        background: #fee2e2;
+        color: #ef4444;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-add-day {
+        width: 100%;
+        padding: 12px;
+        background: #f0fdf4;
+        border: 2px dashed var(--primary);
+        border-radius: 10px;
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+        .btn-add-day:hover {
+            background: #dcfce7;
+        }
+
+    /* Sticky save bar */
+    .save-bar {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        border-top: 1px solid var(--border);
+        padding: 16px 0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        z-index: 100;
+        margin-top: 8px;
+    }
+
+    /* List textarea */
+    .list-wrap {
+        position: relative;
+    }
+
+    .list-counter {
+        position: absolute;
+        bottom: 8px;
+        right: 10px;
+        font-size: 10px;
+        color: var(--text-muted);
+        pointer-events: none;
+        background: #fff;
+        padding: 1px 4px;
+        border-radius: 4px;
+    }
+
+    /* Map preview */
+    .map-box {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1.5px solid var(--border);
+        height: 160px;
+        display: none;
+        margin-top: 12px;
+    }
+
+    @@media (max-width: 768px) {
+        .form-grid
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid.cols-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid.cols-4 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1><i class="fa-solid fa-plus" style="color:var(--primary); margin-right:8px;"></i>Yeni Tur Ekle</h1>
+        <p>Tüm alanları doldurarak yeni bir tur oluşturun.</p>
+    </div>
+    <a asp-area="Admin" asp-controller="AdminTour" asp-action="Index" class="btn btn-outline btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Geri
+    </a>
+</div>
+
+<form asp-action="Create" asp-controller="AdminTour" asp-area="Admin" method="post" id="tourForm">
+
+    <!-- ① TEMEL BİLGİLER -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <div class="icon-wrap"><i class="fa-solid fa-circle-info"></i></div>
+            <div>
+                <h3>Temel Bilgiler</h3>
+                <p>Turun adı, açıklaması ve rozeti</p>
+            </div>
+        </div>
+        <div class="section-card-body">
+            <div class="form-grid cols-1" style="gap:16px;">
+                <div>
+                    <label class="field-label">Tur Başlığı <span style="color:#ef4444;">*</span></label>
+                    <input type="text" name="Title" class="form-control"
+                           placeholder="Örn: Kapadokya Balon Turu" required
+                           oninput="document.getElementById('titleCount').textContent = this.value.length + ' / 100'">
+                    <span class="field-hint" id="titleCount">0 / 100</span>
+                </div>
+                <div>
+                    <label class="field-label">Açıklama</label>
+                    <textarea name="Description" class="form-control" rows="4"
+                              placeholder="Tur hakkında detaylı açıklama..."
+                              oninput="document.getElementById('descCount').textContent = this.value.length + ' karakter'"></textarea>
+                    <span class="field-hint" id="descCount">0 karakter</span>
+                </div>
+                <div>
+                    <label class="field-label">Rozet</label>
+                    <div class="badge-picker" id="badgePicker">
+                        @foreach (var b in new[] {
+                                                new { Value="Popüler", Icon="fa-fire", Color="#ef4444" },
+                                                new { Value="VIP", Icon="fa-crown", Color="#f59e0b" },
+                                                new { Value="Öne Çıkan", Icon="fa-star", Color="#8b5cf6" },
+                                                new { Value="Kültür", Icon="fa-landmark", Color="#3b82f6" },
+                                                new { Value="Yeni", Icon="fa-bolt", Color="#10b981" },
+                                                new { Value="İndirim", Icon="fa-tag", Color="#ec4899" }
+                                                })
+                        {
+                            <label class="badge-opt">
+                                <input type="radio" name="Badge" value="@b.Value">
+                                <i class="fa-solid @b.Icon" style="color:@b.Color;"></i>
+                                @b.Value
+                            </label>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <label class="field-label">Tur Durumu</label>
+                    <label class="toggle-row" for="statusToggle">
+                        <div>
+                            <div class="toggle-info" id="statusLabel">Aktif</div>
+                            <div class="toggle-sub">Tur sitede görünür olacak</div>
+                        </div>
+                        <input type="checkbox" id="statusToggle" name="Status" value="true" checked>
+                        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ② GÖRSELLER -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <div class="icon-wrap"><i class="fa-solid fa-image"></i></div>
+            <div>
+                <h3>Görseller</h3>
+                <p>Kapak görseli ve galeri fotoğrafları</p>
+            </div>
+        </div>
+        <div class="section-card-body">
+            <div class="form-grid" style="gap:20px; align-items:start;">
+                <div>
+                    <label class="field-label">Kapak Görseli URL</label>
+                    <input type="text" name="CoverImageUrl" id="coverUrlInput" class="form-control"
+                           placeholder="https://..." oninput="updateCoverPreview(this.value)">
+                    <span class="field-hint">Turun liste ve detay sayfasında görünür</span>
+                    <div class="cover-preview-box" id="coverBox" style="margin-top:12px;">
+                        <div class="placeholder">
+                            <i class="fa-regular fa-image" style="font-size:28px; opacity:.3;"></i>
+                            <span>Görsel önizlemesi</span>
+                        </div>
+                        <img id="coverImg" alt="Kapak">
+                    </div>
+                </div>
+                <div>
+                    <label class="field-label">Galeri Görselleri</label>
+                    <div class="list-wrap">
+                        <textarea name="GalleryImagesText" id="galleryText" class="form-control" rows="6"
+                                  placeholder="Her satıra bir URL:&#10;https://resim1.jpg&#10;https://resim2.jpg"
+                                  oninput="updateGalleryPreview()"></textarea>
+                    </div>
+                    <span class="field-hint">Her satıra bir görsel URL'si girin</span>
+                    <div class="gallery-grid" id="galleryGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ③ FİYAT & KAPASİTE -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <div class="icon-wrap"><i class="fa-solid fa-lira-sign"></i></div>
+            <div>
+                <h3>Fiyat & Kapasite</h3>
+                <p>Tur fiyatı, süre ve katılımcı kapasitesi</p>
+            </div>
+        </div>
+        <div class="section-card-body">
+            <div class="form-grid cols-4" style="gap:16px;">
+                <div>
+                    <label class="field-label">Fiyat (₺) <span style="color:#ef4444;">*</span></label>
+                    <input type="number" name="Price" class="form-control" min="0" step="0.01"
+                           placeholder="0.00" required oninput="updatePriceHint(this.value)">
+                    <span class="field-hint" id="priceHint">Liste fiyatı gösterilecek</span>
+                </div>
+                <div>
+                    <label class="field-label">Gün Sayısı <span style="color:#ef4444;">*</span></label>
+                    <input type="number" name="DayCount" class="form-control" min="1" value="1" required>
+                </div>
+                <div>
+                    <label class="field-label">Kapasite <span style="color:#ef4444;">*</span></label>
+                    <input type="number" name="Capacity" class="form-control" min="1" value="10" required>
+                </div>
+                <div>
+                    <label class="field-label">Neler Beklenmeli</label>
+                    <input type="text" name="WhatToExpect" class="form-control" placeholder="Kısa özet...">
+                </div>
+            </div>
+            <div style="margin-top:16px;">
+                <label class="field-label">Beklenti Listesi</label>
+                <div class="list-wrap">
+                    <textarea name="ExpectListText" class="form-control" rows="3"
+                              placeholder="Her satıra bir madde:&#10;Rehberli tur&#10;Özel ulaşım"></textarea>
+                </div>
+            </div>
+            <div style="margin-top:16px;">
+                <label class="field-label">Gelişmiş Olanaklar</label>
+                <textarea name="AdvanceFacilities" class="form-control" rows="3"
+                          placeholder="Tura özel gelişmiş olanaklar..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- ④ LOKASYON & ZAMANLAMA -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <div class="icon-wrap"><i class="fa-solid fa-map-location-dot"></i></div>
+            <div>
+                <h3>Lokasyon & Zamanlama</h3>
+                <p>Konum, kalkış ve dönüş bilgileri</p>
+            </div>
+        </div>
+        <div class="section-card-body">
+            <div class="form-grid" style="gap:16px;">
+                <div>
+                    <label class="field-label">Lokasyon</label>
+                    <input type="text" name="Location" class="form-control" placeholder="Şehir, Ülke">
+                </div>
+                <div>
+                    <label class="field-label">Kalkış Noktası</label>
+                    <input type="text" name="DepartureLocation" class="form-control" placeholder="Kalkış noktası">
+                </div>
+                <div>
+                    <label class="field-label">Kalkış Saati</label>
+                    <input type="text" name="DepartureTime" class="form-control" placeholder="08:00">
+                </div>
+                <div>
+                    <label class="field-label">Dönüş Saati</label>
+                    <input type="text" name="ReturnTime" class="form-control" placeholder="18:00">
+                </div>
+                <div>
+                    <label class="field-label">Enlem (Latitude)</label>
+                    <input type="number" name="Latitude" class="form-control" step="0.0001" placeholder="41.0082"
+                           id="latInput" oninput="scheduleMapUpdate()">
+                </div>
+                <div>
+                    <label class="field-label">Boylam (Longitude)</label>
+                    <input type="number" name="Longitude" class="form-control" step="0.0001" placeholder="28.9784"
+                           id="lngInput" oninput="scheduleMapUpdate()">
+                </div>
+            </div>
+            <div class="map-box" id="mapBox">
+                <iframe id="mapFrame" width="100%" height="160" style="border:0;" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⑤ HİZMETLER -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <div class="icon-wrap"><i class="fa-solid fa-list-check"></i></div>
+            <div>
+                <h3>Hizmetler & Olanaklar</h3>
+                <p>Dahil ve hariç hizmetler ile tur olanakları</p>
+            </div>
+        </div>
+        <div class="section-card-body">
+            <div class="form-grid cols-3" style="gap:16px;">
+                <div>
+                    <label class="field-label">
+                        <i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>
+                        Dahil Hizmetler
+                    </label>
+                    <div class="list-wrap">
+                        <textarea name="IncludedServicesText" id="includedText" class="form-control" rows="7"
+                                  placeholder="Konaklama&#10;Kahvaltı&#10;Transfer&#10;Rehber"
+                                  oninput="updateCounter('includedText','includedCnt')"></textarea>
+                        <span class="list-counter" id="includedCnt">0 madde</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="field-label">
+                        <i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i>
+                        Hariç Hizmetler
+                    </label>
+                    <div class="list-wrap">
+                        <textarea name="ExcludedServicesText" id="excludedText" class="form-control" rows="7"
+                                  placeholder="Vize&#10;Kişisel harcamalar&#10;Ekstra turlar"
+                                  oninput="updateCounter('excludedText','excludedCnt')"></textarea>
+                        <span class="list-counter" id="excludedCnt">0 madde</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="field-label">
+                        <i class="fa-solid fa-star" style="color:#f59e0b;"></i>
+                        Olanaklar
+                    </label>
+                    <div class="list-wrap">
+                        <textarea name="AmenitiesText" id="amenitiesText" class="form-control" rows="7"
+                                  placeholder="WiFi&#10;Havuz&#10;Spa&#10;Klima"
+                                  oninput="updateCounter('amenitiesText','amenitiesCnt')"></textarea>
+                        <span class="list-counter" id="amenitiesCnt">0 madde</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⑥ GÜNLÜK TUR PLANI -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <div class="icon-wrap"><i class="fa-solid fa-calendar-days"></i></div>
+            <div>
+                <h3>Günlük Tur Planı</h3>
+                <p>Her gün için başlık, açıklama ve öne çıkanlar</p>
+            </div>
+        </div>
+        <div class="section-card-body">
+            <div id="dayPlansContainer"></div>
+            <button type="button" class="btn-add-day" onclick="addDay()">
+                <i class="fa-solid fa-plus"></i> Gün Ekle
+            </button>
+        </div>
+    </div>
+
+    <!-- KAYDET BARI -->
+    <div class="save-bar">
+        <a asp-area="Admin" asp-controller="AdminTour" asp-action="Index"
+           class="btn btn-outline" style="padding:10px 24px;">İptal</a>
+        <button type="submit" class="btn btn-primary" style="padding:10px 28px;">
+            <i class="fa-solid fa-floppy-disk"></i> Turu Kaydet
+        </button>
+    </div>
+
+</form>
+
+@section Scripts {
+    <script>
+        // Badge picker
+        document.querySelectorAll('.badge-opt').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.badge-opt').forEach(o => o.classList.remove('sel'));
+                opt.classList.add('sel');
+            });
+        });
+
+        // Status toggle
+        document.getElementById('statusToggle').addEventListener('change', function () {
+            document.getElementById('statusLabel').textContent = this.checked ? 'Aktif' : 'Pasif';
+        });
+
+        // Cover preview
+        function updateCoverPreview(url) {
+            const box = document.getElementById('coverBox');
+            const img = document.getElementById('coverImg');
+            if (!url) { img.style.display = 'none'; box.classList.remove('has-img'); return; }
+            img.src = url;
+            img.style.display = 'block';
+            img.onload = () => box.classList.add('has-img');
+            img.onerror = () => { img.style.display = 'none'; box.classList.remove('has-img'); };
+        }
+
+        // Gallery preview
+        function updateGalleryPreview() {
+            const lines = document.getElementById('galleryText').value
+                .split('\n').map(l => l.trim()).filter(l => l);
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = lines.map((url, i) => `
+                <div class="gallery-item">
+                    <img src="${url}" alt="Galeri ${i+1}"
+                         onerror="this.parentElement.style.opacity='.3'">
+                </div>`).join('');
+        }
+
+        // Price hint
+        function updatePriceHint(val) {
+            const p = parseFloat(val);
+            const el = document.getElementById('priceHint');
+            if (!p || isNaN(p)) { el.textContent = 'Liste fiyatı gösterilecek'; return; }
+            el.textContent = `Liste fiyatı: ${(p * 1.2).toLocaleString('tr-TR')} ₺ (+%20)`;
+        }
+
+        // Map preview
+        let mapTimer;
+        function scheduleMapUpdate() {
+            clearTimeout(mapTimer);
+            mapTimer = setTimeout(updateMap, 800);
+        }
+        function updateMap() {
+            const lat = document.getElementById('latInput').value;
+            const lng = document.getElementById('lngInput').value;
+            if (!lat || !lng) return;
+            const box = document.getElementById('mapBox');
+            document.getElementById('mapFrame').src =
+                `https://maps.google.com/maps?q=${lat},${lng}&z=12&output=embed`;
+            box.style.display = 'block';
+        }
+
+        // List counter
+        function updateCounter(textareaId, counterId) {
+            const n = document.getElementById(textareaId).value
+                .split('\n').filter(l => l.trim()).length;
+            document.getElementById(counterId).textContent = n + ' madde';
+        }
+
+        // Day plans
+        let dayCount = 0;
+        function addDay() {
+            dayCount++;
+            const idx = dayCount - 1;
+            const div = document.createElement('div');
+            div.className = 'day-card';
+            div.id = `day-${dayCount}`;
+            div.innerHTML = `
+                <div class="day-card-header">
+                    <span class="day-badge">Gün ${dayCount}</span>
+                    <button type="button" class="btn-remove-day" onclick="removeDay(${dayCount})">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <input type="hidden" name="DayPlans[${idx}].DayNumber" value="${dayCount}">
+                <div class="form-grid cols-3" style="gap:12px;">
+                    <div>
+                        <label class="field-label">Başlık</label>
+                        <input type="text" name="DayPlans[${idx}].Title" class="form-control"
+                               placeholder="Gün ${dayCount} başlığı...">
+                    </div>
+                    <div class="span-2">
+                        <label class="field-label">Açıklama</label>
+                        <input type="text" name="DayPlans[${idx}].Description" class="form-control"
+                               placeholder="Günün kısa açıklaması...">
+                    </div>
+                    <div class="span-2" style="grid-column: span 3;">
+                        <label class="field-label">
+                            Öne Çıkanlar
+                            <span style="font-weight:400; color:var(--text-muted);">(virgülle ayırın)</span>
+                        </label>
+                        <input type="text" name="HighlightsText" class="form-control"
+                               placeholder="Sabah turu, Öğle yemeği, Müze gezisi">
+                    </div>
+                </div>`;
+            document.getElementById('dayPlansContainer').appendChild(div);
+        }
+
+        function removeDay(id) {
+            document.getElementById(`day-${id}`)?.remove();
+            renumberDays();
+        }
+
+        function renumberDays() {
+            document.querySelectorAll('.day-card').forEach((card, i) => {
+                card.querySelector('.day-badge').textContent = `Gün ${i + 1}`;
+                card.querySelectorAll('[name]').forEach(el => {
+                    el.name = el.name.replace(/DayPlans\[\d+\]/, `DayPlans[${i}]`);
+                    if (el.type === 'hidden') el.value = i + 1;
+                });
+            });
+            dayCount = document.querySelectorAll('.day-card').length;
+        }
+    </script>
+}

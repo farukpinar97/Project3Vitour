@@ -1,0 +1,315 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Kontrol Paneli";
+    ViewBag.ActiveMenu = "dashboard";
+}
+
+<!-- ── İstatistik Kartları ── -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-map-location-dot"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.TotalTours ?? 0)</div>
+            <div class="stat-label">Toplam Tur</div>
+            <div class="stat-change up">
+                <i class="fa-solid fa-circle-check"></i> @(ViewBag.ActiveTours ?? 0) aktif
+            </div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.TotalReservations ?? 0)</div>
+            <div class="stat-label">Rezervasyon</div>
+            <div class="stat-change up">
+                <i class="fa-solid fa-clock"></i> @(ViewBag.PendingReservations ?? 0) bekleyen
+            </div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon amber"><i class="fa-solid fa-star"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.TotalReviews ?? 0)</div>
+            <div class="stat-label">Değerlendirme</div>
+            <div class="stat-change @(((int)(ViewBag.PendingReviews ?? 0)) > 0 ? "down" : "up")">
+                <i class="fa-solid fa-circle-exclamation"></i> @(ViewBag.PendingReviews ?? 0) onay bekleyen
+            </div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon rose"><i class="fa-solid fa-envelope"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.UnreadMessages ?? 0)</div>
+            <div class="stat-label">Okunmamış Mesaj</div>
+            <div class="stat-change @(((int)(ViewBag.UnreadMessages ?? 0)) > 0 ? "down" : "up")">
+                <i class="fa-solid fa-envelope-open"></i> @(ViewBag.TotalMessages ?? 0) toplam
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Gelir Özeti ── -->
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-body" style="padding:20px 24px;">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+            <div style="text-align:center; padding:16px; background:#f0fdf4; border-radius:12px;">
+                <div style="font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Onaylı Gelir</div>
+                <div style="font-size:22px; font-weight:800; color:var(--primary);">
+                    @(((decimal)(ViewBag.TotalRevenue ?? 0m)).ToString("N0")) ₺
+                </div>
+            </div>
+            <div style="text-align:center; padding:16px; background:#f0f9ff; border-radius:12px;">
+                <div style="font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Onaylı Rezervasyon</div>
+                <div style="font-size:22px; font-weight:800; color:#0369a1;">@(ViewBag.ConfirmedReservations ?? 0)</div>
+            </div>
+            <div style="text-align:center; padding:16px; background:#fefce8; border-radius:12px;">
+                <div style="font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Ortalama Puan</div>
+                <div style="font-size:22px; font-weight:800; color:#d97706;">
+                    @(((double)(ViewBag.AverageRating ?? 0.0)).ToString("F1")) ★
+                </div>
+            </div>
+            <div style="text-align:center; padding:16px; background:#fdf4ff; border-radius:12px;">
+                <div style="font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Onaylı Yorum</div>
+                <div style="font-size:22px; font-weight:800; color:#9333ea;">@(ViewBag.ApprovedReviews ?? 0)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Son Rezervasyonlar -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">
+                <i class="fa-solid fa-calendar-check" style="color:var(--primary);margin-right:8px;"></i>
+                Son Rezervasyonlar
+            </span>
+            <a asp-area="Admin" asp-controller="AdminBooking" asp-action="Index"
+               class="btn btn-outline btn-sm">Tümü</a>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Müşteri</th>
+                        <th>Tur</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.RecentReservations != null && ((IEnumerable<dynamic>)ViewBag.RecentReservations).Any())
+                    {
+                        foreach (var r in ViewBag.RecentReservations)
+                        {
+                            string bgColor = r.Status == "Confirmed" ? "#dcfce7" :
+                            r.Status == "Cancelled" ? "#fee2e2" : "#fef3c7";
+                            string txtColor = r.Status == "Confirmed" ? "#16a34a" :
+                            r.Status == "Cancelled" ? "#ef4444" : "#d97706";
+                            string label = r.Status == "Confirmed" ? "Onaylandı" :
+                            r.Status == "Cancelled" ? "İptal" : "Bekliyor";
+                            <tr>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <div style="width:30px; height:30px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; flex-shrink:0;">
+                                            @r.FullName[0]
+                                        </div>
+                                        <span class="fw-600" style="font-size:13px;">@r.FullName</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted" style="font-size:12px;">@r.TourTitle</td>
+                                <td class="text-muted" style="font-size:12px;">@r.BookingDate.ToString("dd MMM")</td>
+                                <td style="font-weight:700; color:var(--primary); font-size:13px;">
+                                    @r.TotalPrice.ToString("N0") ₺
+                                </td>
+                                <td>
+                                    <span style="background:@bgColor; color:@txtColor; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;">
+                                        @label
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:var(--text-muted); padding:32px;">
+                                <i class="fa-solid fa-inbox" style="font-size:24px; margin-bottom:8px; display:block; opacity:.3;"></i>
+                                Henüz rezervasyon yok
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sağ Kolon -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+        <!-- Son Mesajlar -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <i class="fa-solid fa-envelope" style="color:var(--primary);margin-right:8px;"></i>
+                    Son Mesajlar
+                </span>
+                <a asp-area="Admin" asp-controller="AdminMessage" asp-action="Index"
+                   class="btn btn-outline btn-sm">Tümü</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Gönderen</th>
+                            <th>Mesaj</th>
+                            <th>Tarih</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.RecentMessages != null && ((IEnumerable<dynamic>)ViewBag.RecentMessages).Any())
+                        {
+                            foreach (var m in ViewBag.RecentMessages)
+                            {
+                                <tr>
+                                    <td class="fw-600" style="font-size:13px;">@m.FullName</td>
+                                    <td class="text-muted" style="font-size:12px; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">@m.Message</td>
+                                    <td class="text-muted" style="font-size:12px;">@m.CreatedAt.ToString("dd MMM")</td>
+                                    <td>
+                                        @if (!m.IsRead)
+                                        {
+                                            <span class="badge badge-blue" style="font-size:10px;">Yeni</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" style="text-align:center; color:var(--text-muted); padding:24px;">
+                                    Mesaj yok
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Hızlı İşlemler -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">
+                    <i class="fa-solid fa-bolt" style="color:var(--accent);margin-right:8px;"></i>
+                    Hızlı İşlemler
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="quick-actions">
+                    <a asp-area="Admin" asp-controller="AdminTour" asp-action="Create" class="quick-action">
+                        <div class="quick-action-icon" style="background:#dcfce7; color:#16a34a;"><i class="fa-solid fa-plus"></i></div>
+                        Yeni Tur Ekle
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminCategory" asp-action="Create" class="quick-action">
+                        <div class="quick-action-icon" style="background:#dbeafe; color:#2563eb;"><i class="fa-solid fa-tag"></i></div>
+                        Kategori Ekle
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminGuide" asp-action="Create" class="quick-action">
+                        <div class="quick-action-icon" style="background:#f3e8ff; color:#9333ea;"><i class="fa-solid fa-user-tie"></i></div>
+                        Rehber Ekle
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminMessage" asp-action="Index" class="quick-action">
+                        <div class="quick-action-icon" style="background:#fef3c7; color:#d97706;"><i class="fa-solid fa-envelope-open"></i></div>
+                        Mesajları Gör
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminReview" asp-action="Index" class="quick-action">
+                        <div class="quick-action-icon" style="background:#fff1f2; color:#e11d48;"><i class="fa-solid fa-star"></i></div>
+                        Yorumları Yönet
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminBooking" asp-action="Index" class="quick-action">
+                        <div class="quick-action-icon" style="background:#f0fdf4; color:#16a34a;"><i class="fa-solid fa-calendar-check"></i></div>
+                        Rezervasyonlar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Son Değerlendirmeler -->
+<div class="card" style="margin-top:20px;">
+    <div class="card-header">
+        <span class="card-title">
+            <i class="fa-solid fa-star" style="color:var(--accent);margin-right:8px;"></i>
+            Son Değerlendirmeler
+        </span>
+        <a asp-area="Admin" asp-controller="AdminReview" asp-action="Index"
+           class="btn btn-outline btn-sm">Tümü</a>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Müşteri</th>
+                    <th>Yorum</th>
+                    <th>Puan</th>
+                    <th>Tarih</th>
+                    <th>Durum</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.RecentReviews != null && ((IEnumerable<dynamic>)ViewBag.RecentReviews).Any())
+                {
+                    foreach (var r in ViewBag.RecentReviews)
+                    {
+                        double avg = (r.ValueRating + r.DestinationRating + r.AccommodationRating + r.TransportRating) / 4.0;
+                        <tr>
+                            <td class="fw-600" style="font-size:13px;">@r.AuthorName</td>
+                            <td class="text-muted" style="font-size:12px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">@r.Comment</td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:4px;">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        <i class="fa-solid fa-star" style="font-size:11px; color:@(i < Math.Round(avg) ? "#f59e0b" : "#e5e7eb");"></i>
+                                    }
+                                    <span style="font-size:11px; color:#6b7280; margin-left:4px;">@avg.ToString("F1")</span>
+                                </div>
+                            </td>
+                            <td class="text-muted" style="font-size:12px;">@r.CreatedAt.ToString("dd MMM yyyy")</td>
+                            <td>
+                                @if (r.IsApproved)
+                                {
+                                    <span style="background:#dcfce7; color:#16a34a; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;">Onaylı</span>
+                                }
+                                else
+                                {
+                                    <span style="background:#fef3c7; color:#d97706; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;">Bekliyor</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-area="Admin" asp-controller="AdminReview" asp-action="Delete"
+                                   asp-route-id="@r.ReviewID"
+                                   class="btn btn-danger btn-sm btn-icon"
+                                   onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" style="text-align:center; color:var(--text-muted); padding:32px;">
+                            <i class="fa-solid fa-star" style="font-size:24px; margin-bottom:8px; display:block; opacity:.3;"></i>
+                            Değerlendirme yok
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

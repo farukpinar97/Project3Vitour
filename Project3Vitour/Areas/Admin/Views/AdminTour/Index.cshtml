@@ -1,0 +1,205 @@
+﻿@using Project3Vitour.Dtos.TourDtos
+@model List<ResultTourDto>
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Turlar";
+    ViewBag.ActiveMenu = "tours";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string currentFilter = ViewBag.CurrentFilter ?? "all";
+    string currentSearch = ViewBag.CurrentSearch ?? "";
+}
+
+<style>
+    .filter-tab {
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 1.5px solid var(--border);
+        background: transparent;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all .2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .filter-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .filter-tab:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+</style>
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#dcfce7; color:#16a34a; padding:12px 20px; border-radius:8px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">
+            <i class="fa-solid fa-map-location-dot" style="color:var(--primary);margin-right:8px;"></i>
+            Tur Listesi
+        </span>
+        <a asp-area="Admin" asp-controller="AdminTour" asp-action="Create" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Yeni Tur
+        </a>
+    </div>
+
+    <div class="card-body" style="padding-bottom:0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <a href="?filter=all&page=1&search=@currentSearch"
+                   class="filter-tab @(currentFilter == "all" ? "active" : "")">
+                    Tümü (@(ViewBag.TotalCount ?? 0))
+                </a>
+                <a href="?filter=active&page=1&search=@currentSearch"
+                   class="filter-tab @(currentFilter == "active" ? "active" : "")">
+                    Aktif (@(ViewBag.ActiveCount ?? 0))
+                </a>
+                <a href="?filter=passive&page=1&search=@currentSearch"
+                   class="filter-tab @(currentFilter == "passive" ? "active" : "")">
+                    Pasif (@(ViewBag.PassiveCount ?? 0))
+                </a>
+            </div>
+            <form method="get" style="display:flex; gap:8px;">
+                <input type="hidden" name="filter" value="@currentFilter">
+                <input type="hidden" name="page" value="1">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Tur ara..." value="@currentSearch">
+                </div>
+                <button type="submit" class="btn btn-outline btn-sm">Ara</button>
+                @if (!string.IsNullOrEmpty(currentSearch))
+                {
+                    <a href="?filter=@currentFilter&page=1" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                }
+            </form>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table id="tourTable">
+            <thead>
+                <tr>
+                    <th>Görsel</th>
+                    <th>Tur Adı</th>
+                    <th>Fiyat</th>
+                    <th>Süre</th>
+                    <th>Kapasite</th>
+                    <th>Rozet</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.CoverImageUrl" alt="@item.Title"
+                                 style="width:48px; height:36px; object-fit:cover; border-radius:6px;">
+                        </td>
+                        <td>
+                            <div class="fw-600">@item.Title</div>
+                            <div class="text-muted" style="font-size:11px; margin-top:2px;">
+                                @(item.Description?.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-600" style="color:var(--primary);">@item.Price.ToString("N0") ₺</div>
+                            <div class="text-muted" style="font-size:11px; text-decoration:line-through;">
+                                @((item.Price + item.Price * 20 / 100).ToString("N0")) ₺
+                            </div>
+                        </td>
+                        <td><span class="badge badge-blue"><i class="fa-regular fa-clock"></i> @item.DayCount Gün</span></td>
+                        <td><span class="badge badge-purple"><i class="fa-solid fa-users"></i> @item.Capacity Kişi</span></td>
+                        <td><span class="badge badge-amber">@item.Badge</span></td>
+                        <td>
+                            @if (item.Status)
+                            {
+                                <span class="badge badge-green"><i class="fa-solid fa-circle" style="font-size:7px;"></i> Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-red"><i class="fa-solid fa-circle" style="font-size:7px;"></i> Pasif</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a href="/Tour/TourDetail/@item.TourID" target="_blank"
+                                   class="btn btn-outline btn-sm btn-icon" title="Görüntüle">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a asp-area="Admin" asp-controller="AdminTour" asp-action="Update"
+                                   asp-route-id="@item.TourID" class="btn btn-outline btn-sm btn-icon" title="Düzenle">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a asp-area="Admin" asp-controller="AdminTour" asp-action="Delete"
+                                   asp-route-id="@item.TourID" class="btn btn-danger btn-sm btn-icon"
+                                   onclick="return confirm('@item.Title turunu silmek istediğinize emin misiniz?')" title="Sil">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Any())
+        {
+            <div style="text-align:center; padding:48px; color:var(--text-muted);">
+                <i class="fa-solid fa-map-location-dot" style="font-size:32px; margin-bottom:12px; display:block; opacity:.3;"></i>
+                @if (!string.IsNullOrEmpty(currentSearch))
+                {
+                    <span>"@currentSearch" için sonuç bulunamadı.</span>
+                }
+                else
+                {
+                    <span>Henüz tur eklenmemiş. <a asp-area="Admin" asp-controller="AdminTour" asp-action="Create" style="color:var(--primary);">İlk turu ekleyin</a></span>
+                }
+            </div>
+        }
+
+        @if (totalPages > 1)
+        {
+            <div style="display:flex; justify-content:center; align-items:center; gap:8px; padding:20px;">
+                @if (currentPage > 1)
+                {
+                    <a href="?filter=@currentFilter&page=@(currentPage - 1)&search=@currentSearch" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                }
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    string pageUrl = $"?filter={currentFilter}&page={i}&search={currentSearch}";
+                    bool isActive = i == currentPage;
+                    <a href="@pageUrl"
+                       class="btn btn-sm @(isActive ? "" : "btn-outline")"
+                       style="@(isActive ? "background:var(--primary); color:white; border-color:var(--primary);" : "")">
+                        @i
+                    </a>
+                }
+                @if (currentPage < totalPages)
+                {
+                    <a href="?filter=@currentFilter&page=@(currentPage + 1)&search=@currentSearch" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>

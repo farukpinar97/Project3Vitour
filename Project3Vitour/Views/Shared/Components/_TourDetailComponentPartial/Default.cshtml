@@ -1,0 +1,626 @@
+﻿@using Project3Vitour.Dtos.TourDtos
+@model GetTourByIdDto
+
+@{
+    double avgRating = 0, avgValue = 0, avgDestination = 0, avgAccommodation = 0, avgTransport = 0;
+    decimal originalPrice = Model.Price + Model.Price * 20 / 100;
+
+    if (Model.Reviews?.Count > 0)
+    {
+        avgValue = Model.Reviews.Average(r => (double)r.ValueRating);
+        avgDestination = Model.Reviews.Average(r => (double)r.DestinationRating);
+        avgAccommodation = Model.Reviews.Average(r => (double)r.AccommodationRating);
+        avgTransport = Model.Reviews.Average(r => (double)r.TransportRating);
+        avgRating = (avgValue + avgDestination + avgAccommodation + avgTransport) / 4.0;
+    }
+}
+
+
+<section class="tour-single" style="position: relative; z-index: 10; margin-top: 20px;">
+    <div class="tf-container">
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="nav justify-content-between tab-tour-single" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-information-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-information" type="button">
+                            <i class="icon-Vector-51"></i> Bilgi
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-tour-planing-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-tour-planing" type="button">
+                            <i class="icon-destination-2-1"></i> Tur Planı
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-location-share-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-location-share" type="button">
+                            <i class="icon-map-1"></i> Lokasyon
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-reviews-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-reviews" type="button">
+                            <i class="icon-favourite-1"></i> Değerlendirmeler
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-shot-gallery-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-shot-gallery" type="button">
+                            <i class="icon-image-gallery-1"></i> Galeri
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row pd-main">
+            <div class="col-lg-12">
+                <div class="tab-content" id="pills-tabContent">
+
+                    <div class="tab-pane fade show active" id="pills-information" role="tabpanel">
+                        <div class="row mb-50">
+                            <div class="col-lg-12">
+                                <div class="inner-heading-wrap flex-two">
+                                    <div class="inner-heading">
+                                        <span class="feature">@Model.Badge</span>
+                                        <h2 class="title">@Model.Title</h2>
+                                        <ul class="flex-three list-wrap-heading">
+                                            <li class="flex-three">
+                                                <i class="icon-time-left"></i>
+                                                <span>@Model.DayCount Gün</span>
+                                            </li>
+                                            <li class="flex-three">
+                                                <i class="icon-user"></i>
+                                                <span>Maks. Konuk: @Model.Capacity</span>
+                                            </li>
+                                            <li class="flex-three">
+                                                <i class="icon-18"></i>
+                                                <span>@Model.Location</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="inner-price">
+                                        <div class="flex-three">
+                                            @{
+                                                double avg = Model.Reviews?.Count > 0
+                                                ? Model.Reviews.Average(r => (r.ValueRating + r.DestinationRating + r.AccommodationRating + r.TransportRating) / 4.0)
+                                                : 0;
+                                                int roundedAvg = (int)Math.Round(avg);
+                                            }
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= roundedAvg)
+                                                {
+                                                    <i class="icon-Star" style="color:#f59e0b;"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="icon-Star" style="color:#d1d5db;"></i>
+                                                }
+                                            }
+                                            <span class="review">
+                                                @if (Model.Reviews?.Count > 0)
+                                                {
+                                                    @($"({avg:F1} | {Model.Reviews.Count} Değerlendirme)")
+                                                }
+                                                else
+                                                {
+                                                    @("(Değerlendirme yok)")
+                                                }
+                                            </span>
+                                        </div>
+                                        <p class="price-sale text-main">
+                                            @Model.Price ₺ <del><span class="price">@originalPrice ₺</span></del>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; height:420px; margin-bottom:40px;">
+
+                            <div style="border-radius:12px; overflow:hidden;">
+                                <img src="@Model.CoverImageUrl" alt="@Model.Title"
+                                     style="width:100%; height:100%; object-fit:cover; display:block;">
+                            </div>
+
+                            <div style="border-radius:12px; overflow:hidden;">
+                                @if (Model.GalleryImages?.Count > 0)
+                                {
+                                    <img src="@Model.GalleryImages[0]" alt="Galeri 1"
+                                         style="width:100%; height:100%; object-fit:cover; display:block;">
+                                }
+                            </div>
+
+                            <div style="border-radius:12px; overflow:hidden;">
+                                @if (Model.GalleryImages?.Count > 1)
+                                {
+                                    <img src="@Model.GalleryImages[1]" alt="Galeri 2"
+                                         style="width:100%; height:100%; object-fit:cover; display:block;">
+                                }
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="information-content-tour">
+                                    <div class="description-wrap mb-40">
+                                        <span class="description">Açıklama:</span>
+                                        <p class="des">@Model.Description</p>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(Model.AdvanceFacilities))
+                                    {
+                                        <div class="description-wrap mb-40">
+                                            <span class="description">Gelişmiş Olanaklar</span>
+                                            <p class="des">@Model.AdvanceFacilities</p>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.WhatToExpect))
+                                    {
+                                        <div class="description-wrap mb-40">
+                                            <span class="description">Neler Beklenmeli</span>
+                                            <p class="des mb-18">@Model.WhatToExpect</p>
+                                            @if (Model.ExpectList?.Any() == true)
+                                            {
+                                                <ul class="listing-des">
+                                                    @foreach (var item in Model.ExpectList)
+                                                    {
+                                                        <li><p>@item</p></li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                    }
+
+                                    <div class="expect-wrap mb-70">
+                                        <h4 class="title mb-18">Kalkış & Dönüş Bilgileri</h4>
+                                        <div class="expect flex-three">
+                                            <span>Kalkış/Varış Noktası</span>
+                                            <p>@Model.DepartureLocation</p>
+                                        </div>
+                                        <div class="expect flex-three">
+                                            <span>Kalkış Saati</span>
+                                            <p>@Model.DepartureTime</p>
+                                        </div>
+                                        <div class="expect flex-three">
+                                            <span>Dönüş Saati</span>
+                                            <p>@Model.ReturnTime</p>
+                                        </div>
+                                    </div>
+                                    <div class="expect-wrap mb-70">
+                                        <h4 class="title mb-40">Dahil / Hariç</h4>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <ul class="listing-clude">
+                                                    @foreach (var s in Model.IncludedServices ?? new())
+                                                    {
+                                                        <li class="flex-three">
+                                                            <i class="icon-Vector-7"></i>
+                                                            <p>@s</p>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <ul class="listing-clude">
+                                                    @foreach (var s in Model.ExcludedServices ?? new())
+                                                    {
+                                                        <li class="flex-three">
+                                                            <img src="https://vitourwp.themesflat.co/wp-content/plugins/tf-vitour-core-plugin/includes/elementor-widget/assets/images/icons/icon-remove.svg" style="width:20px; margin-right:19px;"
+                                                                 alt="Remove Icon"
+                                                                 class="custom-icon" />
+                                                            <p>@s</p>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if (Model.Amenities?.Any() == true)
+                                    {
+                                        <div class="expect-wrap">
+                                            <h4 class="title mb-40">Tur Olanakları</h4>
+                                            <ul class="listing-icon">
+                                                @foreach (var a in Model.Amenities)
+                                                {
+                                                    <li class="flex-three">
+                                                        <i class="icon-10"></i>
+                                                        <p>@a</p>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                @await Html.PartialAsync("_BookingWidget", Model)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-tour-planing" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="planing-content-tour">
+                                    <h3 class="title-plan">Tur Planı:</h3>
+                                    @foreach (var day in Model.DayPlans ?? new())
+                                    {
+                                        <div class="tour-planing-section flex">
+                                            <div class="number-box flex-five">@day.DayNumber.ToString("D2")</div>
+                                            <div class="content-box">
+                                                <h5 class="title">@day.Title</h5>
+                                                <p class="des">@day.Description</p>
+                                                @if (day.Highlights?.Any() == true)
+                                                {
+                                                    <ul class="listing-des">
+                                                        @foreach (var h in day.Highlights)
+                                                        {
+                                                            <li><p>@h</p></li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                @await Html.PartialAsync("_BookingWidget", Model)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-location-share" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="localtion-content-tour">
+                                    <div class="map2 relative mb-32">
+                                        <iframe src="https://maps.google.com/maps?q=@Model.Latitude,@Model.Longitude&z=14&output=embed"
+                                                width="100%" height="400" style="border:0;" allowfullscreen loading="lazy">
+                                        </iframe>
+                                    </div>
+                                    <div class="flex-three map-list mb-50">
+                                        <i class="icon-18"></i>
+                                        <p>@Model.Location</p>
+                                    </div>
+                                    <p class="des mb-22">@Model.Description</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                @await Html.PartialAsync("_BookingWidget", Model)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-reviews" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="review-content-tour">
+                                    <div class="custom-review mb-80">
+                                        <h4 class="title-review mb-37">Müşteri Değerlendirmeleri</h4>
+                                        <div class="flex card-list" style="align-items:center; gap:40px;">
+
+                                            <!-- Sol: Genel Puan Çemberi -->
+                                            <div class="card-review">
+                                                <div class="percent">
+                                                    <svg>
+                                                        <circle cx="105" cy="105" r="100"></circle>
+                                                        <circle cx="105" cy="105" r="100" style="--percent: @((int)(avgRating * 20))"></circle>
+                                                    </svg>
+                                                    <div class="number center">
+                                                        <span>Genel Puan</span>
+                                                        <h5 class="number-reating">@avgRating.ToString("F1")</h5>
+                                                        <span>5 üzerinden</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Sağ: Kategori Yıldızları -->
+                                            <div style="flex:1; display:flex; flex-direction:column; gap:14px;">
+                                                @{
+                                                    var categories = new[]
+                                                    {
+                                                                                                new { Label = "Değer", Value = avgValue },
+                                                                                                new { Label = "Konum", Value = avgDestination },
+                                                                                                new { Label = "Konaklama", Value = avgAccommodation },
+                                                                                                new { Label = "Ulaşım", Value = avgTransport }
+                                                                                                };
+                                                }
+                                                @foreach (var cat in categories)
+                                                {
+                                                    <div style="display:flex; align-items:center; gap:12px;">
+                                                        <span style="width:90px; font-size:13px; font-weight:600; color:var(--text);">@cat.Label</span>
+                                                        <div style="display:flex; gap:3px;">
+                                                            @for (int i = 1; i <= 5; i++)
+                                                            {
+                                                                <i class="icon-Star" style="font-size:14px; color:@(i <= Math.Round(cat.Value) ? "#f59e0b" : "#d1d5db");"></i>
+                                                            }
+                                                        </div>
+                                                        <span style="font-size:13px; font-weight:700; color:var(--primary);">@cat.Value.ToString("F1")</span>
+                                                    </div>
+                                                }
+
+                                                <div style="margin-top:6px; font-size:12px; color:var(--text-muted);">
+                                                    <i class="icon-user" style="color:var(--primary);"></i>
+                                                    @Model.Reviews?.Count değerlendirmeye dayanmaktadır
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="client-review mb-80">
+                                        <div class="flex-two mb-50 inner-header">
+                                            <h4 class="title-review">Müşteri Yorumları</h4>
+                                            <span>@(Model.Reviews?.Count(r => r.IsApproved) ?? 0) Yorum</span>
+                                        </div>
+
+                                        <div class="client-review-list" id="review-list">
+                                            @foreach (var review in Model.Reviews?.Where(r => r.IsApproved).Take(3) ?? Enumerable.Empty<TourReviewDto>())
+                                            {
+                                                <div class="client-review-item flex">
+                                                    <div class="avata">
+                                                        <img src="~/vitour/assets/images/avata/avatar-example.png" alt="@review.AuthorName">
+                                                    </div>
+                                                    <div class="content">
+                                                        <span class="name">@review.AuthorName</span>
+                                                        <p class="des">@review.Comment</p>
+                                                        <div class="start">
+                                                            @for (int i = 0; i < review.ValueRating; i++)
+                                                            {
+                                                                <i class="icon-Star"></i>
+                                                            }
+                                                            <span>@review.ValueRating.ToString("F1")</span>
+                                                        </div>
+                                                        <span class="date">@review.CreatedAt.ToString("dd MMM yyyy")</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        @if ((Model.Reviews?.Count(r => r.IsApproved) ?? 0) > 3)
+                                        {
+                                            <div class="center mt-30" id="load-more-wrap">
+                                                <button id="load-more-btn"
+                                                        class="tf-btn btn-fill"
+                                                        data-tourid="@Model.TourID"
+                                                        data-skip="3"
+                                                        style="padding:12px 30px; border:none; cursor:pointer;">
+                                                    Daha Fazla Göster
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <script>
+                                        document.getElementById('load-more-btn')?.addEventListener('click', function () {
+                                            var btn = this;
+                                            var tourId = btn.dataset.tourid;
+                                            var skip = parseInt(btn.dataset.skip);
+                                            var take = 3;
+
+                                            btn.innerText = 'Yükleniyor...';
+                                            btn.disabled = true;
+
+                                            fetch('/Tour/LoadMoreReviews?tourId=' + tourId + '&skip=' + skip + '&take=' + take)
+                                                .then(function (res) { return res.json(); })
+                                                .then(function (reviews) {
+                                                    var list = document.getElementById('review-list');
+
+                                                    if (reviews.length === 0) {
+                                                        document.getElementById('load-more-wrap').remove();
+                                                        return;
+                                                    }
+
+                                                    reviews.forEach(function (review) {
+                                                        var stars = '';
+                                                        for (var i = 0; i < review.valueRating; i++) {
+                                                            stars += '<i class="icon-Star" style="color:#f59e0b;"></i>';
+                                                        }
+                                                        var date = new Date(review.createdAt).toLocaleDateString('tr-TR', {
+                                                            day: '2-digit', month: 'short', year: 'numeric'
+                                                        });
+                                                        var html = `
+                                                            <div class="client-review-item flex">
+                                                                <div class="avata">
+                                                                    <img src="/vitour/assets/images/avata/avatar-example.png" alt="${review.authorName}">
+                                                                </div>
+                                                                <div class="content">
+                                                                    <span class="name">${review.authorName}</span>
+                                                                    <p class="des">${review.comment}</p>
+                                                                    <div class="start">${stars}<span>${review.valueRating}.0</span></div>
+                                                                    <span class="date">${date}</span>
+                                                                </div>
+                                                            </div>`;
+                                                        list.insertAdjacentHTML('beforeend', html);
+                                                    });
+
+                                                    btn.dataset.skip = skip + reviews.length;
+                                                    btn.innerText = 'Daha Fazla Göster';
+                                                    btn.disabled = false;
+
+                                                    if (reviews.length < take) {
+                                                        document.getElementById('load-more-wrap').remove();
+                                                    }
+                                                })
+                                                .catch(function () {
+                                                    btn.innerText = 'Hata oluştu, tekrar dene';
+                                                    btn.disabled = false;
+                                                });
+                                        });
+                                    </script>
+
+                                    <div class="form-review bg-1">
+                                        <h4 class="title-review mb-60">Yorum Yap</h4>
+                                        <form asp-action="AddReview" asp-controller="Tour" method="post" id="form-review">
+                                            <input type="hidden" name="TourID" value="@Model.TourID" />
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <fieldset class="relative input-wrap mb-37">
+                                                        <i class="icon-user-1-1"></i>
+                                                        <input type="text" name="AuthorName" placeholder="Adınız" required>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <fieldset class="relative input-wrap mb-37">
+                                                        <i class="icon-Group-51"></i>
+                                                        <input type="email" name="AuthorEmail" placeholder="E-posta" required>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <fieldset class="relative input-wrap mb-37">
+                                                        <i class="icon-content"></i>
+                                                        <textarea name="Comment" rows="6" placeholder="Yorumunuz"></textarea>
+                                                    </fieldset>
+                                                </div>
+
+                                                <!-- Yıldız Seçimleri -->
+                                                @foreach (var rating in new[] {
+                                                                                                new { Name = "ValueRating", Label = "Değer" },
+                                                                                                new { Name = "DestinationRating", Label = "Destinasyon" },
+                                                                                                new { Name = "AccommodationRating", Label = "Konaklama" },
+                                                                                                new { Name = "TransportRating", Label = "Ulaşım" }
+                                                                                                })
+                                                {
+                                                    <div class="col-md-3 mb-30">
+                                                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:8px;">@rating.Label</label>
+                                                        <div class="star-rating" data-name="@rating.Name">
+                                                            @for (int i = 1; i <= 5; i++)
+                                                            {
+                                                                <i class="icon-Star star-item" data-value="@i"
+                                                                   style="font-size:24px; cursor:pointer; color:#d1d5db; transition:color 0.15s;"></i>
+                                                            }
+                                                        </div>
+                                                        <input type="hidden" name="@rating.Name" value="5">
+                                                    </div>
+                                                }
+
+                                                <div class="col-lg-12 mt-30">
+                                                    <button type="submit" class="submit">Yorum Gönder</button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                        <style>
+                                            .star-rating .star-item:hover,
+                                            .star-rating .star-item.active {
+                                                color: #f59e0b !important;
+                                            }
+                                        </style>
+
+                                        <script>
+                                            document.querySelectorAll('.star-rating').forEach(function (container) {
+                                                var stars = container.querySelectorAll('.star-item');
+                                                var input = document.querySelector('input[name="' + container.dataset.name + '"]');
+                                                var currentValue = 5;
+
+                                                // Başlangıçta 5 yıldız seçili
+                                                stars.forEach(function (s) {
+                                                    s.setAttribute('style', 'font-size:24px; cursor:pointer; color:#f59e0b !important;');
+                                                });
+
+                                                stars.forEach(function (star, index) {
+                                                    star.addEventListener('mouseover', function () {
+                                                        stars.forEach(function (s, i) {
+                                                            s.setAttribute('style', 'font-size:24px; cursor:pointer; color:' + (i <= index ? '#f59e0b' : '#d1d5db') + ' !important;');
+                                                        });
+                                                    });
+
+                                                    star.addEventListener('mouseleave', function () {
+                                                        stars.forEach(function (s, i) {
+                                                            s.setAttribute('style', 'font-size:24px; cursor:pointer; color:' + (i < currentValue ? '#f59e0b' : '#d1d5db') + ' !important;');
+                                                        });
+                                                    });
+
+                                                    star.addEventListener('click', function () {
+                                                        currentValue = index + 1;
+                                                        input.value = currentValue;
+                                                        stars.forEach(function (s, i) {
+                                                            s.setAttribute('style', 'font-size:24px; cursor:pointer; color:' + (i < currentValue ? '#f59e0b' : '#d1d5db') + ' !important;');
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                @await Html.PartialAsync("_BookingWidget", Model)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-shot-gallery" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="gallery-content-tour">
+                                    @for (int i = 0; i < (Model.GalleryImages?.Count ?? 0); i++)
+                                    {
+                                        <div class="image-gallery@(i + 1) image">
+                                            <img src="@Model.GalleryImages![i]" alt="Galeri @(i + 1)">
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                @await Html.PartialAsync("_BookingWidget", Model)
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    window.addEventListener('load', function () {
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'reviews') {
+            var reviewsTab = document.getElementById('pills-reviews-tab');
+            if (reviewsTab) {
+                reviewsTab.click();
+                setTimeout(function () {
+                    reviewsTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 300);
+            }
+        }
+
+        @if (TempData["ReviewResult"] != null)
+        {
+                if (TempData["ReviewResult"].ToString() == "success")
+                {
+                        <text>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Yorumunuz Alındı!',
+                            text: 'Yorumunuz yayınlanmıştır.',
+                            confirmButtonText: 'Tamam',
+                            confirmButtonColor: '#1a7f5a',
+                            timer: 4000,
+                            timerProgressBar: true
+                        });
+                        </text>
+                }
+                else
+                {
+                        <text>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Yorum Reddedildi!',
+                            text: 'Yorumunuz uygunsuz içerik barındırdığı için yayınlanamaz.',
+                            confirmButtonText: 'Tamam',
+                            confirmButtonColor: '#ef4444'
+                        });
+                        </text>
+                }
+        }
+    });
+</script>

@@ -1,0 +1,264 @@
+﻿@using Project3Vitour.Entities
+@model ContactMessage
+@{
+    ViewBag.Title = "Mesaj Detayı";
+    ViewBag.ActiveMenu = "messages";
+}
+
+<style>
+    .message-card {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .sender-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 24px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .sender-avatar {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: #fff;
+        font-size: 22px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .sender-info {
+        flex: 1;
+    }
+
+    .sender-name {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .sender-email {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+
+    .message-meta {
+        display: flex;
+        gap: 16px;
+        padding: 14px 24px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+        font-size: 12.5px;
+        color: var(--text-muted);
+        flex-wrap: wrap;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .meta-item i {
+            color: var(--primary);
+            font-size: 12px;
+        }
+
+    .message-body {
+        padding: 28px 24px;
+        font-size: 14.5px;
+        line-height: 1.8;
+        color: var(--text);
+        white-space: pre-wrap;
+        word-break: break-word;
+        min-height: 140px;
+    }
+
+    .message-actions {
+        padding: 16px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg);
+        border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .reply-section {
+        margin-top: 24px;
+    }
+
+    .reply-form {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+
+    .reply-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13.5px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .reply-to-badge {
+        background: var(--primary-bg);
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+</style>
+
+<div class="message-card">
+    <!-- Geri Dön -->
+    <div style="margin-bottom:16px;">
+        <a asp-area="Admin" asp-controller="AdminMessage" asp-action="Index"
+           class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Mesajlara Dön
+        </a>
+    </div>
+
+    <!-- Ana Mesaj Kartı -->
+    <div class="card">
+        <!-- Gönderen Başlık -->
+        <div class="sender-header">
+            <div class="sender-avatar">@Model.FullName?.Substring(0, 1).ToUpper()</div>
+            <div class="sender-info">
+                <div class="sender-name">@Model.FullName</div>
+                <a href="mailto:@Model.Email" class="sender-email">
+                    <i class="fa-solid fa-envelope"></i> @Model.Email
+                </a>
+            </div>
+            <div>
+                @if (!Model.IsRead)
+                {
+                    <span class="badge badge-amber" style="padding:6px 14px; font-size:12px;">
+                        <i class="fa-solid fa-circle" style="font-size:7px;"></i> Okunmamış
+                    </span>
+                }
+                else
+                {
+                    <span class="badge badge-green" style="padding:6px 14px; font-size:12px;">
+                        <i class="fa-solid fa-circle-check"></i> Okunmuş
+                    </span>
+                }
+            </div>
+        </div>
+
+        <!-- Meta Bilgiler -->
+        <div class="message-meta">
+            <div class="meta-item">
+                <i class="fa-regular fa-calendar"></i>
+                @Model.CreatedAt.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+            </div>
+            <div class="meta-item">
+                <i class="fa-regular fa-clock"></i>
+                @Model.CreatedAt.ToString("HH:mm")
+            </div>
+            <div class="meta-item">
+                <i class="fa-solid fa-fingerprint"></i>
+                <span style="font-family:monospace; font-size:11px;">@Model.MessageID</span>
+            </div>
+        </div>
+
+        <!-- Mesaj İçeriği -->
+        <div class="message-body">@Model.Message</div>
+
+        <!-- Aksiyonlar -->
+        <div class="message-actions">
+            <div class="flex gap-2">
+                <a href="mailto:@Model.Email?subject=Re: Vitour İletişim" class="btn btn-primary">
+                    <i class="fa-solid fa-reply"></i> E-posta ile Yanıtla
+                </a>
+                @if (!Model.IsRead)
+                {
+                    <a asp-area="Admin" asp-controller="AdminMessage" asp-action="MarkAsRead"
+                       asp-route-id="@Model.MessageID" class="btn btn-outline">
+                        <i class="fa-solid fa-check"></i> Okundu İşaretle
+                    </a>
+                }
+            </div>
+            <a asp-area="Admin" asp-controller="AdminMessage" asp-action="Delete"
+               asp-route-id="@Model.MessageID"
+               class="btn btn-danger"
+               onclick="return confirm('Bu mesajı silmek istediğinize emin misiniz?')">
+                <i class="fa-solid fa-trash"></i> Sil
+            </a>
+        </div>
+    </div>
+
+    <!-- Hızlı Yanıt Bölümü -->
+    <div class="reply-section">
+        <div class="reply-form">
+            <div class="reply-header">
+                <i class="fa-solid fa-reply" style="color:var(--primary);"></i>
+                Hızlı Yanıt
+                <span class="reply-to-badge">@Model.Email</span>
+            </div>
+            <div style="padding:20px;">
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label">Konu</label>
+                    <input type="text" class="form-control"
+                           value="Re: Vitour İletişim Formu" id="replySubject">
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label class="form-label">Mesajınız</label>
+                    <textarea class="form-control" rows="5" id="replyBody"
+                              placeholder="Yanıtınızı buraya yazın..."></textarea>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <a id="sendEmailBtn" href="mailto:@Model.Email" class="btn btn-primary">
+                        <i class="fa-solid fa-paper-plane"></i> E-posta İstemcisinde Aç
+                    </a>
+                    <button type="button" onclick="copyEmail()" class="btn btn-outline">
+                        <i class="fa-solid fa-copy"></i> E-postayı Kopyala
+                    </button>
+                </div>
+                <div style="margin-top:10px; font-size:12px; color:var(--text-muted);">
+                    <i class="fa-solid fa-circle-info" style="color:var(--info);"></i>
+                    "E-posta İstemcisinde Aç" butonu varsayılan e-posta uygulamanızı açar. SMTP entegrasyonu için geliştirici desteği gereklidir.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // E-posta istemcisini hazırla
+        document.getElementById('sendEmailBtn').addEventListener('click', function (e) {
+            const subject = encodeURIComponent(document.getElementById('replySubject').value);
+            const body = encodeURIComponent(document.getElementById('replyBody').value);
+            this.href = `mailto:@Model.Email?subject=${subject}&body=${body}`;
+        });
+
+        // E-posta adresini kopyala
+        function copyEmail() {
+            navigator.clipboard.writeText('@Model.Email').then(() => {
+                const btn = event.target.closest('button');
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Kopyalandı!';
+                btn.style.background = '#dcfce7';
+                btn.style.color = '#16a34a';
+                setTimeout(() => { btn.innerHTML = original; btn.style = ''; }, 2000);
+            });
+        }
+    </script>
+}

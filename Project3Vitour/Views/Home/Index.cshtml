@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<main id="main">
+
+
+    <!-- Widget Slider -->
+    @await Component.InvokeAsync("_HomeSliderComponentPartial")
+    <!-- Widget Slider -->
+    <!-- Widget Hakkımızda -->
+    @await Component.InvokeAsync("_HomeGuideComponentPartial")
+    <!-- Widget Hakkımızda -->
+    <!-- Widget Tur Paketi -->
+    @await Component.InvokeAsync("_HomeFeaturedTourComponentPartial")
+    <!-- Widget Tur Paketi -->
+    <!-- Widget SSS -->
+    @await Component.InvokeAsync("_HomeFaqComponentPartial")
+    <!-- Widget SSS -->
+    @await Component.InvokeAsync("_HomeReadyComponentPartial")
+    <!-- Widget Özellikler -->
+    @await Component.InvokeAsync("_HomeWhyChoiseUsComponentPartial")
+    <!-- Widget Özellikler -->
+    @await Component.InvokeAsync("_HomeStatisticComponentPartial")
+
+    <!-- Widget Referanslar -->
+    @await Component.InvokeAsync("_HomeTestimonialComponentPartial")
+</main>

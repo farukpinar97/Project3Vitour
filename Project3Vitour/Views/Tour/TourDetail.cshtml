@@ -1,0 +1,7 @@
+﻿@{
+    Layout = "_Layout";
+    string tourId = ViewBag.TourId;
+}
+
+@await Component.InvokeAsync("_TourBreadcumbComponentPartial")
+@await Component.InvokeAsync("_TourDetailComponentPartial", new { id = tourId })

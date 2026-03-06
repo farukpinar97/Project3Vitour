@@ -1,0 +1,302 @@
+﻿@using Project3Vitour.Entities
+@model List<TourReview>
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Değerlendirmeler";
+    ViewBag.ActiveMenu = "reviews";
+
+    double avgRating = ViewBag.AverageRating ?? 0;
+    double avgValue = ViewBag.AvgValue ?? 0;
+    double avgDestination = ViewBag.AvgDestination ?? 0;
+    double avgAccommodation = ViewBag.AvgAccommodation ?? 0;
+    double avgTransport = ViewBag.AvgTransport ?? 0;
+}
+
+<!-- İstatistik Kartları -->
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="stat-card">
+        <div class="stat-icon amber"><i class="fa-solid fa-star"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.TotalCount ?? 0)</div>
+            <div class="stat-label">Toplam Yorum</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.ApprovedCount ?? 0)</div>
+            <div class="stat-label">Onaylı Yorum</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon rose"><i class="fa-solid fa-clock"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.PendingCount ?? 0)</div>
+            <div class="stat-label">Onay Bekleyen</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-chart-simple"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@avgRating.ToString("F1")</div>
+            <div class="stat-label">Ortalama Puan</div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success" style="background:#dcfce7; color:#16a34a; padding:12px 20px; border-radius:8px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
+}
+
+<!-- Orta İstatistikler -->
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+
+    <!-- Kategori Ortalamaları -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">
+                <i class="fa-solid fa-chart-bar" style="color:var(--primary); margin-right:8px;"></i>
+                Kategori Ortalamaları
+            </span>
+        </div>
+        <div class="card-body" style="padding:20px;">
+            @foreach (var cat in new[] {
+                        new { Label = "Değer", Value = avgValue, Color = "#1a7f5a" },
+                        new { Label = "Konum", Value = avgDestination, Color = "#2563eb" },
+                        new { Label = "Konaklama", Value = avgAccommodation, Color = "#9333ea" },
+                        new { Label = "Ulaşım", Value = avgTransport, Color = "#f59e0b" }
+                        })
+            {
+                <div style="margin-bottom:16px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <span style="font-size:13px; font-weight:600;">@cat.Label</span>
+                        <span style="font-size:13px; font-weight:700; color:@cat.Color;">@cat.Value.ToString("F1") / 5</span>
+                    </div>
+                    <div style="background:#f1f5f9; border-radius:99px; height:8px; overflow:hidden;">
+                        <div style="width:@((cat.Value / 5.0 * 100).ToString("F0"))%; height:100%; background:@cat.Color; border-radius:99px; transition:width 0.6s;"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- En İyi / En Kötü Turlar -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">
+                <i class="fa-solid fa-trophy" style="color:#f59e0b; margin-right:8px;"></i>
+                Tur Sıralaması
+            </span>
+        </div>
+        <div class="card-body" style="padding:20px;">
+            <p style="font-size:12px; font-weight:700; color:#16a34a; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">
+                <i class="fa-solid fa-arrow-trend-up"></i> En Yüksek Puanlı
+            </p>
+            @if (ViewBag.TopTours != null)
+            {
+                int rank = 1;
+                foreach (var t in ViewBag.TopTours)
+                {
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                        <div style="width:24px; height:24px; border-radius:50%; background:@(rank == 1 ? "#fef3c7" : rank == 2 ? "#f1f5f9" : "#fce7f3"); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:@(rank == 1 ? "#d97706" : rank == 2 ? "#64748b" : "#db2777");">
+                            @rank
+                        </div>
+                        <div style="flex:1; overflow:hidden;">
+                            <div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@t.TourTitle</div>
+                            <div style="font-size:11px; color:#6b7280;">@t.ReviewCount yorum</div>
+                        </div>
+                        <div style="font-size:13px; font-weight:700; color:#f59e0b;">
+                            @(((double)t.AvgRating).ToString("F1"))
+                            <i class="fa-solid fa-star" style="font-size:11px;"></i>
+                        </div>
+                    </div>
+                    rank++;
+                }
+            }
+
+            <hr style="border:none; border-top:1px solid #f1f5f9; margin:16px 0;">
+
+            <p style="font-size:12px; font-weight:700; color:#ef4444; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">
+                <i class="fa-solid fa-arrow-trend-down"></i> En Düşük Puanlı
+            </p>
+            @if (ViewBag.BottomTours != null)
+            {
+                foreach (var t in ViewBag.BottomTours)
+                {
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                        <div style="width:24px; height:24px; border-radius:50%; background:#fee2e2; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-arrow-down" style="font-size:10px; color:#ef4444;"></i>
+                        </div>
+                        <div style="flex:1; overflow:hidden;">
+                            <div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@t.TourTitle</div>
+                            <div style="font-size:11px; color:#6b7280;">@t.ReviewCount yorum</div>
+                        </div>
+                        <div style="font-size:13px; font-weight:700; color:#ef4444;">
+                            @(((double)t.AvgRating).ToString("F1"))
+                            <i class="fa-solid fa-star" style="font-size:11px;"></i>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Yorum Tablosu -->
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">
+            <i class="fa-solid fa-star" style="color:var(--accent); margin-right:8px;"></i>
+            Tüm Değerlendirmeler
+        </span>
+        <div style="display:flex; gap:8px;">
+            <a href="?filter=all&page=1"
+               class="btn btn-sm @(ViewBag.CurrentFilter == "all" || ViewBag.CurrentFilter == null ? "" : "btn-outline")"
+               style="@(ViewBag.CurrentFilter == "all" || ViewBag.CurrentFilter == null ? "background:var(--primary); color:white; border-color:var(--primary);" : "")">
+                Tümü (@(ViewBag.TotalCount ?? 0))
+            </a>
+            <a href="?filter=pending&page=1"
+               class="btn btn-sm @(ViewBag.CurrentFilter == "pending" ? "" : "btn-outline")"
+               style="@(ViewBag.CurrentFilter == "pending" ? "background:var(--primary); color:white; border-color:var(--primary);" : "")">
+                Bekleyen (@(ViewBag.PendingCount ?? 0))
+            </a>
+            <a href="?filter=approved&page=1"
+               class="btn btn-sm @(ViewBag.CurrentFilter == "approved" ? "" : "btn-outline")"
+               style="@(ViewBag.CurrentFilter == "approved" ? "background:var(--primary); color:white; border-color:var(--primary);" : "")">
+                Onaylı (@(ViewBag.ApprovedCount ?? 0))
+            </a>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+                <thead>
+                    <tr>
+                        <th style="width:15%;">Müşteri</th>
+                        <th style="width:25%;">Yorum</th>
+                        <th style="width:20%;">Puanlar</th>
+                        <th style="width:12%;">Moderasyon</th>
+                        <th style="width:10%;">Tarih</th>
+                        <th style="width:10%;">Durum</th>
+                        <th style="width:8%;">İşlem</th>
+                    </tr>
+                </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    double avg = (r.ValueRating + r.DestinationRating + r.AccommodationRating + r.TransportRating) / 4.0;
+                    <tr class="review-row" data-status="@(r.IsApproved ? "approved" : "pending")">
+                        <td>
+                            <div class="fw-600">@r.AuthorName</div>
+                            <div class="text-muted" style="font-size:12px;">@r.AuthorEmail</div>
+                        </td>
+                        <td style="max-width:220px;">
+                            <p style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:13px;">
+                                @r.Comment
+                            </p>
+                        </td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:2px; font-size:11px;">
+                                <span>Değer: @r.ValueRating/5</span>
+                                <span>Konum: @r.DestinationRating/5</span>
+                                <span>Konaklama: @r.AccommodationRating/5</span>
+                                <span>Ulaşım: @r.TransportRating/5</span>
+                                <div style="margin-top:4px;">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fa-solid fa-star" style="font-size:11px; color:@(i <= Math.Round(avg) ? "#f59e0b" : "#d1d5db");"></i>
+                                    }
+                                    <strong style="font-size:12px; margin-left:4px;">@avg.ToString("F1")</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(r.ModerationNote) && r.ModerationNote != "Onaylandı")
+                            {
+                                <span class="badge badge-red" style="font-size:11px;">@r.ModerationNote</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-green" style="font-size:11px;">Temiz</span>
+                            }
+                        </td>
+                        <td class="text-muted" style="font-size:13px;">@r.CreatedAt.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @if (r.IsApproved)
+                            {
+                                <span class="badge badge-green">Onaylı</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-amber">Beklemede</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="display:flex; gap:6px;">
+                                @if (!r.IsApproved)
+                                {
+                                    <a href="/Admin/AdminReview/Approve/@r.ReviewID"
+                                       class="btn btn-sm"
+                                       style="background:#dcfce7; color:#16a34a; border:none;"
+                                       title="Onayla">
+                                        <i class="fa-solid fa-check"></i>
+                                    </a>
+                                }
+                                <a href="/Admin/AdminReview/Delete/@r.ReviewID"
+                                   class="btn btn-danger btn-sm btn-icon"
+                                   onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')"
+                                   title="Sil">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @{
+            int currentPage = ViewBag.CurrentPage ?? 1;
+            int totalPages = ViewBag.TotalPages ?? 1;
+            string currentFilter = ViewBag.CurrentFilter ?? "all";
+        }
+
+        <div style="display:flex; justify-content:center; align-items:center; gap:8px; padding:20px;">
+            @if (currentPage > 1)
+            {
+                <a href="?filter=@currentFilter&page=@(currentPage - 1)" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+            }
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                string pageUrl = $"?filter={currentFilter}&page={i}";
+                bool isActive = i == currentPage;
+                <a href="@pageUrl"
+                   class="btn btn-sm @(isActive ? "" : "btn-outline")"
+                   style="@(isActive ? "background:var(--primary); color:white; border-color:var(--primary);" : "")">
+                    @i
+                </a>
+            }
+
+            @if (currentPage < totalPages)
+            {
+                <a href="?filter=@currentFilter&page=@(currentPage + 1)" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            }
+        </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .active-filter {
+        background: var(--primary) !important;
+        color: white !important;
+        border-color: var(--primary) !important;
+    }
+</style>

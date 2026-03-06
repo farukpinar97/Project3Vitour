@@ -1,0 +1,54 @@
+﻿@using Project3Vitour.Dtos.BookingDtos
+@model ResultBookingDto
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div style="background:#fff; border-radius:16px; padding:40px; box-shadow:0 2px 8px rgba(0,0,0,.06);">
+            <h4 style="font-weight:700; margin-bottom:8px;">Email Gönder</h4>
+            <p style="color:#6b7280; margin-bottom:32px;">@Model.FullName kişisine email gönderin.</p>
+
+            <div style="background:#f8fafc; border-radius:12px; padding:16px; margin-bottom:24px;">
+                <p style="font-size:13px; color:#6b7280; margin-bottom:4px;">Alıcı</p>
+                <p style="font-weight:600;">@Model.FullName — @Model.Email</p>
+            </div>
+
+            <form asp-action="SendEmail" asp-controller="AdminBooking" asp-area="Admin" method="post">
+                <input type="hidden" name="id" value="@Model.BookingID" />
+
+                <div style="margin-bottom:16px;">
+                    <label style="font-size:13px; font-weight:600; margin-bottom:8px; display:block;">Konu</label>
+                    <input type="text" name="subject"
+                           value="Rezervasyon Bilgilendirme — @Model.TourTitle"
+                           style="width:100%; padding:12px 16px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px;">
+                </div>
+
+                <div style="margin-bottom:24px;">
+                    <label style="font-size:13px; font-weight:600; margin-bottom:8px; display:block;">Mesaj</label>
+                    <textarea name="body" rows="8"
+                              style="width:100%; padding:12px 16px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; resize:vertical;">Sayın @Model.FullName,
+
+@Model.TourTitle turunuza ait rezervasyonunuz hakkında bilgilendirme yapmak istedik.
+
+Tur Tarihi: @Model.BookingDate.ToString("dd MMM yyyy")
+Katılımcı Sayısı: @Model.ParticipantCount Kişi
+Toplam Tutar: @Model.TotalPrice.ToString("N0") ₺
+
+Herhangi bir sorunuz için bizimle iletişime geçebilirsiniz.
+
+Vitour Ekibi</textarea>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <button type="submit"
+                            style="flex:1; text-align:center; padding:14px; background:var(--primary); color:#fff; border-radius:8px; font-weight:600; border:none; cursor:pointer; font-size:14px;">
+                        <i class="fa-solid fa-paper-plane"></i> Gönder
+                    </button>
+                    <a href="/Admin/AdminBooking/Detail/@Model.BookingID"
+                       style="padding:14px 20px; background:#f3f4f6; color:#374151; border-radius:8px; font-weight:600; text-decoration:none;">
+                        <i class="fa-solid fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

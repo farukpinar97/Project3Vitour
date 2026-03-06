@@ -1,0 +1,206 @@
+﻿@using Project3Vitour.Dtos.TourDtos
+@model List<ResultTourDto>
+
+@{
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    long totalCount = ViewBag.TotalCount;
+    int pageSize = ViewBag.PageSize;
+    long showing = Math.Min(currentPage * pageSize, totalCount);
+}
+
+<section class="archieve-tour">
+    <div class="tf-container">
+        <div class="listing-list-car-wrap listing-list-car-wrap-grid3">
+            <form action="/Tour/TourList" method="get" class="tf-my-listing mb-37">
+                <div class="row align-center">
+                    <div class="col-sm-5">
+                        <p class="showing">
+                            @totalCount Sonuçtan <span class="text-main">@showing</span> Tur Görüntüleniyor
+                        </p>
+                    </div>
+                    <div class="col-sm-7 flex-six group-bar-wrap">
+                        <div class="listing-all-wrap">
+                            <div class="flex-three">
+                                <div class="group-select-recently">
+                                    <div class="nice-select" tabindex="0">
+                                        <i class="icon-Vector6"></i>
+                                        <span class="current">
+                                            @(ViewBag.CurrentSort == "price_asc" ? "Fiyat (Artan)" :
+                                                                                        ViewBag.CurrentSort == "price_desc" ? "Fiyat (Azalan)" :
+                                                                                        ViewBag.CurrentSort == "new" ? "En Yeni" : "Sırala")
+                                        </span>
+                                        <ul class="list">
+                                            <li class="option @(ViewBag.CurrentSort == "" ? "selected" : "")"
+                                                onclick="applySort('')">Varsayılan</li>
+                                            <li class="option @(ViewBag.CurrentSort == "price_asc" ? "selected" : "")"
+                                                onclick="applySort('price_asc')">Fiyat (Artan)</li>
+                                            <li class="option @(ViewBag.CurrentSort == "price_desc" ? "selected" : "")"
+                                                onclick="applySort('price_desc')">Fiyat (Azalan)</li>
+                                            <li class="option @(ViewBag.CurrentSort == "new" ? "selected" : "")"
+                                                onclick="applySort('new')">En Yeni</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="toolbar-list">
+                                    <div class="form-group">
+                                        <a class="btn-display-listing-grid"><i class="icon-list"></i></a>
+                                    </div>
+                                    <div class="form-group">
+                                        <a class="btn-display-listing-list active">
+                                            <i class="icon-Group-1000001297"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <script>
+                function applySort(sort) {
+                    var url = new URL(window.location.href);
+                    url.searchParams.set('sort', sort);
+                    url.searchParams.set('page', '1');
+                    window.location.href = url.toString();
+                }
+            </script>
+
+            <div class="listing-list-car-grid mb-60">
+                @foreach (var item in Model)
+                {
+                    <div class="tour-listing box-sd">
+                        <a href="/Tour/TourDetail/@item.TourID" class="tour-listing-image">
+                            <div class="badge-top flex-two">
+                                <span class="feature">@item.Badge</span>
+                                <div class="badge-media flex-five">
+                                    <span class="media"><i class="icon-Group-1000002909"></i>@item.GalleryImages.Count</span>
+                                </div>
+                            </div>
+                            <img src="@item.CoverImageUrl" alt="@item.Title"
+                                 style="width:100%; height:250px; object-fit:cover;">
+                        </a>
+                        <div class="tour-listing-content">
+                            <span class="map">
+                                <i class="icon-Vector4"></i>
+                                @(string.IsNullOrEmpty(item.Location) ? "Konum belirtilmemiş" : item.Location)
+                            </span>
+                            <h3 class="title-tour-list">
+                                <a href="/Tour/TourDetail/@item.TourID">@item.Title</a>
+                            </h3>
+                            <div class="review">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= Math.Round(item.AverageRating))
+                                    {
+                                        <i class="icon-Star" style="color:#f59e0b;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="icon-Star" style="color:#d1d5db;"></i>
+                                    }
+                                }
+                                <span>
+                                    @if (item.ReviewCount > 0)
+                                    {
+                                        @($"({item.AverageRating:F1} | {item.ReviewCount} Değerlendirme)")
+                                    }
+                                    else
+                                    {
+                                        @("(Değerlendirme yok)")
+                                    }
+                                </span>
+                            </div>
+                            <div class="icon-box flex-three">
+                                <div class="icons flex-three">
+                                    <i class="icon-time-left"></i>
+                                    <span>@item.DayCount Gün</span>
+                                </div>
+                                <div class="icons flex-three">
+                                    <svg width="21" height="16" viewBox="0 0 21 16" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.34766 4.79761C4.34766 2.94013 5.85346 1.43433 7.71094 1.43433C9.56841 1.43433 11.0742 2.94013 11.0742 4.79761C11.0742 6.65508 9.56841 8.16089 7.71094 8.16089C5.85346 8.16089 4.34766 6.65508 4.34766 4.79761Z"
+                                              stroke="currentColor" stroke-width="1.7" stroke-miterlimit="10"
+                                              stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M9.5977 15.1797H2.46098C1.34827 15.1797 0.558268 14.0954 0.898984 13.0362C1.80408 10.222 4.57804 8.18566 7.69301 8.18566C9.17897 8.18566 10.5566 8.64906 11.6895 9.43922"
+                                              stroke="currentColor" stroke-width="1.7" stroke-miterlimit="10"
+                                              stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M17.1035 15.1797V9.02734" stroke="currentColor"
+                                              stroke-width="1.7" stroke-miterlimit="10"
+                                              stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M20.1797 12.1035H14.0273" stroke="currentColor"
+                                              stroke-width="1.7" stroke-miterlimit="10"
+                                              stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <span>@item.Capacity Kişi</span>
+                                </div>
+                            </div>
+                            <div class="flex-two">
+                                <div class="price-box flex-three">
+                                    <p>Fiyat <span class="price-sale">@item.Price ₺</span></p>
+                                    <del><span class="price">@(item.Price + item.Price * 20 / 100) ₺</span></del>
+                                </div>
+                                <a href="/Booking/Create?id=@item.TourID" class="icon-bookmark">
+                                    <i class="icon-19"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+
+            @{
+                string currentSort = ViewBag.CurrentSort ?? "";
+            }
+
+            <!-- Pagination -->
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="tf-pagination flex-five mt-20">
+
+                        @if (currentPage > 1)
+                        {
+                            <li>
+                                <a class="pages-link" href="?page=@(currentPage - 1)&sort=@currentSort">
+                                    <i class="icon-29"></i>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="disabled">
+                                <a class="pages-link"><i class="icon-29"></i></a>
+                            </li>
+                        }
+
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="@(i == currentPage ? "pages-item active" : "")"
+                                @(i == currentPage ? Html.Raw("aria-current=\"page\"") : Html.Raw(""))>
+                                <a class="pages-link" href="?page=@i&sort=@currentSort">@i</a>
+                            </li>
+                        }
+
+                        @if (currentPage < totalPages)
+                        {
+                            <li>
+                                <a class="pages-link" href="?page=@(currentPage + 1)&sort=@currentSort">
+                                    <i class="icon--1"></i>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="disabled">
+                                <a class="pages-link"><i class="icon--1"></i></a>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

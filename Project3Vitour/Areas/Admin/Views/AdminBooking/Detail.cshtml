@@ -1,0 +1,138 @@
+﻿@using Project3Vitour.Dtos.BookingDtos
+@model ResultBookingDto
+
+@{
+    var (bgColor, textColor, label) = Model.Status switch
+    {
+        "Confirmed" => ("#dcfce7", "#16a34a", "Onaylandı"),
+        "Cancelled" => ("#fee2e2", "#ef4444", "İptal"),
+        _ => ("#fef3c7", "#d97706", "Bekliyor")
+    };
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div style="background:#fff; border-radius:16px; padding:32px; box-shadow:0 2px 8px rgba(0,0,0,.06);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h4 style="font-weight:700; margin:0;">Rezervasyon Detayı</h4>
+                <span style="background:@bgColor; color:@textColor; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600;">
+                    @label
+                </span>
+            </div>
+
+            @* Müşteri Bilgileri *@
+            <h6 style="font-size:13px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid #f3f4f6;">
+                MÜŞTERİ BİLGİLERİ
+            </h6>
+            <div class="row mb-24">
+                <div class="col-md-6">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">Ad Soyad</p>
+                    <p style="font-weight:600;">@Model.FullName</p>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">E-posta</p>
+                    <p style="font-weight:600;">@Model.Email</p>
+                </div>
+                <div class="col-md-6 mt-16">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">Telefon</p>
+                    <p style="font-weight:600;">@Model.Phone</p>
+                </div>
+                <div class="col-md-6 mt-16">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">Rezervasyon Tarihi</p>
+                    <p style="font-weight:600;">@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</p>
+                </div>
+            </div>
+
+            @* Tur Bilgileri *@
+            <h6 style="font-size:13px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid #f3f4f6;">
+                TUR BİLGİLERİ
+            </h6>
+            <div class="row mb-24">
+                <div class="col-md-6">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">Tur Adı</p>
+                    <p style="font-weight:600;">@Model.TourTitle</p>
+                </div>
+                <div class="col-md-6">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">Lokasyon</p>
+                    <p style="font-weight:600;">@Model.TourLocation</p>
+                </div>
+                <div class="col-md-6 mt-16">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">Tur Tarihi</p>
+                    <p style="font-weight:600;">@Model.BookingDate.ToString("dd MMM yyyy")</p>
+                </div>
+                <div class="col-md-6 mt-16">
+                    <p style="font-size:12px; color:#6b7280; margin-bottom:4px;">Katılımcı Sayısı</p>
+                    <p style="font-weight:600;">@Model.ParticipantCount Kişi</p>
+                </div>
+            </div>
+
+            @* Fiyat *@
+            <h6 style="font-size:13px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid #f3f4f6;">
+                ÖDEME BİLGİLERİ
+            </h6>
+            <div style="background:#f8fafc; border-radius:12px; padding:20px; margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#6b7280;">Kişi Başı Fiyat</span>
+                    <span style="font-weight:600;">@Model.TourPrice.ToString("N0") ₺</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#6b7280;">Katılımcı</span>
+                    <span style="font-weight:600;">@Model.ParticipantCount Kişi</span>
+                </div>
+                <div style="border-top:1px solid #e5e7eb; margin:12px 0;"></div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-weight:700;">Toplam</span>
+                    <span style="font-weight:800; font-size:20px; color:var(--primary);">@Model.TotalPrice.ToString("N0") ₺</span>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <h6 style="font-size:13px; font-weight:700; color:var(--primary); margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid #f3f4f6;">
+                    NOTLAR
+                </h6>
+                <p style="color:#374151; line-height:1.7;">@Model.Notes</p>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,.06);">
+            <h6 style="font-weight:700; margin-bottom:20px;">İşlemler</h6>
+            @if (Model.Status == "Pending")
+            {
+                <a href="/Admin/AdminBooking/Confirm/@Model.BookingID"
+                   style="display:block; text-align:center; padding:12px; background:#dcfce7; color:#16a34a; border-radius:8px; font-weight:600; text-decoration:none; margin-bottom:10px;"
+                   onclick="return confirm('Onaylamak istiyor musunuz?')">
+                    <i class="fa-solid fa-check"></i> Onayla
+                </a>
+                <a href="/Admin/AdminBooking/Cancel/@Model.BookingID"
+                   style="display:block; text-align:center; padding:12px; background:#fef3c7; color:#d97706; border-radius:8px; font-weight:600; text-decoration:none; margin-bottom:10px;"
+                   onclick="return confirm('İptal etmek istiyor musunuz?')">
+                    <i class="fa-solid fa-ban"></i> İptal Et
+                </a>
+            }
+            <a href="/Admin/AdminBooking/SendEmail/@Model.BookingID"
+               style="display:block; text-align:center; padding:12px; background:#dbeafe; color:#2563eb; border-radius:8px; font-weight:600; text-decoration:none; margin-bottom:10px;">
+                <i class="fa-solid fa-envelope"></i> Email Gönder
+            </a>
+            <a href="/Admin/AdminBooking/Delete/@Model.BookingID"
+               style="display:block; text-align:center; padding:12px; background:#fee2e2; color:#ef4444; border-radius:8px; font-weight:600; text-decoration:none; margin-bottom:10px;"
+               onclick="return confirm('Silmek istiyor musunuz?')">
+                <i class="fa-solid fa-trash"></i> Sil
+            </a>
+            <a href="/Admin/AdminBooking/Index"
+               style="display:block; text-align:center; padding:12px; background:#f3f4f6; color:#374151; border-radius:8px; font-weight:600; text-decoration:none;">
+                <i class="fa-solid fa-arrow-left"></i> Geri Dön
+            </a>
+        </div>
+
+        <div style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,.06); margin-top:16px; overflow:hidden;">
+            <img src="@Model.TourCoverImageUrl" alt="@Model.TourTitle"
+                 style="width:100%; height:150px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+            <p style="font-weight:700; margin-bottom:4px;">@Model.TourTitle</p>
+            <p style="font-size:12px; color:#6b7280;">@Model.TourLocation</p>
+            <p style="font-size:12px; color:#6b7280;">@Model.TourDayCount Gün</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<section class="widget-tes-style2 bg-1 ">
+    <div class="tf-container">
+        <div class="col-lg-12">
+            <div class="widget-testimonial widget-testimonial-style3 overflow-hidden ">
+                <div class="swiper mySwiper3">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="testimonial-content center relative">
+                                <div class="profile mb-30">
+                                    <h3 class="name">Elif Yılmaz</h3>
+                                    <span class="job">@Localizer["Testimonial_Title1"]</span>
+                                </div>
+                                <p class="tes">
+                                    @Localizer["Testimonial_Comment1"]
+                                </p>
+                                <span class="line"></span>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testimonial-content center">
+                                <div class="profile mb-30">
+                                    <h3 class="name">Mehmet Arslan</h3>
+                                    <span class="job">@Localizer["Testimonial_Title2"]</span>
+                                </div>
+                                <p class="tes">
+                                    @Localizer["Testimonial_Comment2"]
+                                </p>
+                                <span class="line"></span>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="testimonial-content center">
+                                <div class="profile mb-30">
+                                    <h3 class="name">Ayşe Demir</h3>
+                                    <span class="job">@Localizer["Testimonial_Title3"]</span>
+                                </div>
+                                <p class="tes">
+                                    @Localizer["Testimonial_Comment3"]
+                                </p>
+                                <span class="line"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="testimonial-image2">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide avata">
+                            <img src="https://xsgames.co/randomusers/assets/avatars/female/63.jpg" alt="Referans Görseli">
+                        </div>
+                        <div class="swiper-slide avata">
+                            <img src="https://xsgames.co/randomusers/assets/avatars/male/63.jpg" alt="Referans Görseli">
+                        </div>
+                        <div class="swiper-slide avata">
+                            <img src="https://xsgames.co/randomusers/assets/avatars/female/64.jpg" alt="Referans Görseli">
+                        </div>
+                    </div>
+                </div>
+                <div class="start center mt-35 ">
+                    <i class="icon-Star"></i>
+                    <i class="icon-Star"></i>
+                    <i class="icon-Star"></i>
+                    <i class="icon-Star"></i>
+                    <i class="icon-Star"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,262 @@
+﻿@using Project3Vitour.Dtos.BookingDtos
+@model List<ResultBookingDto>
+
+@{
+    ViewBag.Title = "Rezervasyonlar";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string currentFilter = ViewBag.CurrentFilter ?? "all";
+}
+
+<style>
+    .filter-tab {
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 1.5px solid var(--border);
+        background: transparent;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all .2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .filter-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .filter-tab:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+</style>
+
+<!-- Stat Kartları -->
+<div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.TotalCount ?? 0)</div>
+            <div class="stat-label">Toplam</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon amber"><i class="fa-solid fa-clock"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.PendingCount ?? 0)</div>
+            <div class="stat-label">Bekleyen</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.ConfirmedCount ?? 0)</div>
+            <div class="stat-label">Onaylanan</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon rose"><i class="fa-solid fa-ban"></i></div>
+        <div class="stat-info">
+            <div class="stat-value">@(ViewBag.CancelledCount ?? 0)</div>
+            <div class="stat-label">İptal</div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#dcfce7; color:#16a34a; padding:12px 20px; border-radius:8px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">
+            <i class="fa-solid fa-calendar-check" style="color:var(--primary); margin-right:8px;"></i>
+            Rezervasyon Listesi
+        </span>
+        @if (Model.Any())
+        {
+            <div style="display:flex; gap:8px;">
+                <a href="/Admin/AdminBooking/ExportAllPdf"
+                   class="btn btn-sm" style="background:#fee2e2; color:#ef4444; border:none;">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </a>
+                <a href="/Admin/AdminBooking/ExportAllExcel"
+                   class="btn btn-sm" style="background:#dcfce7; color:#16a34a; border:none;">
+                    <i class="fa-solid fa-file-excel"></i> Excel
+                </a>
+            </div>
+        }
+    </div>
+
+    <div class="card-body" style="padding-bottom:0;">
+        <div style="display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;">
+            <a href="?filter=all&page=1" class="filter-tab @(currentFilter == "all" ? "active" : "")">
+                Tümü (@(ViewBag.TotalCount ?? 0))
+            </a>
+            <a href="?filter=pending&page=1" class="filter-tab @(currentFilter == "pending" ? "active" : "")">
+                Bekleyen (@(ViewBag.PendingCount ?? 0))
+            </a>
+            <a href="?filter=confirmed&page=1" class="filter-tab @(currentFilter == "confirmed" ? "active" : "")">
+                Onaylanan (@(ViewBag.ConfirmedCount ?? 0))
+            </a>
+            <a href="?filter=cancelled&page=1" class="filter-tab @(currentFilter == "cancelled" ? "active" : "")">
+                İptal (@(ViewBag.CancelledCount ?? 0))
+            </a>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Rezervasyon No</th>
+                    <th>Müşteri</th>
+                    <th>Tur</th>
+                    <th>Tarih</th>
+                    <th>Kişi</th>
+                    <th>Toplam</th>
+                    <th>Durum</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td>
+                            <span style="font-size:13px; font-weight:700; color:var(--primary); letter-spacing:1px;">
+                                @(booking.BookingNumber ?? "-")
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:36px; height:36px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:14px; flex-shrink:0;">
+                                    @booking.FullName[0]
+                                </div>
+                                <div>
+                                    <p style="font-weight:600; font-size:14px; margin:0;">@booking.FullName</p>
+                                    <p style="font-size:12px; color:#6b7280; margin:0;">@booking.Email</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <p style="font-size:13px; font-weight:600; margin:0;">@booking.TourTitle</p>
+                            <p style="font-size:12px; color:#6b7280; margin:0;">
+                                <i class="fa-solid fa-location-dot" style="color:var(--primary);"></i>
+                                @booking.TourLocation
+                            </p>
+                        </td>
+                        <td class="text-muted" style="font-size:13px;">
+                            @booking.BookingDate.ToString("dd MMM yyyy")
+                        </td>
+                        <td style="font-size:13px; font-weight:600;">
+                            @booking.ParticipantCount Kişi
+                        </td>
+                        <td style="font-size:14px; font-weight:700; color:var(--primary);">
+                            @booking.TotalPrice.ToString("N0") ₺
+                        </td>
+                        <td>
+                            @{
+                                var (bgColor, textColor, label) = booking.Status switch
+                                {
+                                    "Confirmed" => ("#dcfce7", "#16a34a", "Onaylandı"),
+                                    "Cancelled" => ("#fee2e2", "#ef4444", "İptal"),
+                                    _ => ("#fef3c7", "#d97706", "Bekliyor")
+                                };
+                            }
+                            <span style="background:@bgColor; color:@textColor; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600;">
+                                @label
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <a href="/Admin/AdminBooking/Detail/@booking.BookingID"
+                                   class="btn btn-outline btn-sm btn-icon" title="Detay">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                @if (booking.Status == "Pending")
+                                {
+                                    <a href="/Admin/AdminBooking/Confirm/@booking.BookingID"
+                                       class="btn btn-sm btn-icon" title="Onayla"
+                                       style="background:#dcfce7; color:#16a34a; border:none;"
+                                       onclick="return confirm('Rezervasyonu onaylamak istiyor musunuz?')">
+                                        <i class="fa-solid fa-check"></i>
+                                    </a>
+                                    <a href="/Admin/AdminBooking/Cancel/@booking.BookingID"
+                                       class="btn btn-sm btn-icon" title="İptal Et"
+                                       style="background:#fef3c7; color:#d97706; border:none;"
+                                       onclick="return confirm('Rezervasyonu iptal etmek istiyor musunuz?')">
+                                        <i class="fa-solid fa-ban"></i>
+                                    </a>
+                                }
+                                <a href="/Admin/AdminBooking/SendEmail/@booking.BookingID"
+                                   class="btn btn-sm btn-icon" title="Email Gönder"
+                                   style="background:#dbeafe; color:#2563eb; border:none;">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </a>
+                                <a href="/Admin/AdminBooking/ExportPdf?tourId=@booking.TourID"
+                                   class="btn btn-sm btn-icon" title="PDF"
+                                   style="background:#fee2e2; color:#ef4444; border:none;">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </a>
+                                <a href="/Admin/AdminBooking/ExportExcel?tourId=@booking.TourID"
+                                   class="btn btn-sm btn-icon" title="Excel"
+                                   style="background:#dcfce7; color:#16a34a; border:none;">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                </a>
+                                <a href="/Admin/AdminBooking/Delete/@booking.BookingID"
+                                   class="btn btn-danger btn-sm btn-icon" title="Sil"
+                                   onclick="return confirm('Rezervasyonu silmek istiyor musunuz?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Any())
+        {
+            <div style="text-align:center; padding:60px; color:#9ca3af;">
+                <i class="fa-solid fa-calendar-xmark" style="font-size:48px; display:block; margin-bottom:12px; opacity:.3;"></i>
+                <p>Henüz rezervasyon bulunmuyor.</p>
+            </div>
+        }
+
+        @if (totalPages > 1)
+        {
+            <div style="display:flex; justify-content:center; align-items:center; gap:8px; padding:20px;">
+                @if (currentPage > 1)
+                {
+                    <a href="?filter=@currentFilter&page=@(currentPage - 1)" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                }
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    string pageUrl = $"?filter={currentFilter}&page={i}";
+                    bool isActive = i == currentPage;
+                    <a href="@pageUrl"
+                       class="btn btn-sm @(isActive ? "" : "btn-outline")"
+                       style="@(isActive ? "background:var(--primary); color:white; border-color:var(--primary);" : "")">
+                        @i
+                    </a>
+                }
+                @if (currentPage < totalPages)
+                {
+                    <a href="?filter=@currentFilter&page=@(currentPage + 1)" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>

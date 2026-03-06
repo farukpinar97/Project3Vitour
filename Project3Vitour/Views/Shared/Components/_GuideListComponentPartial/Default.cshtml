@@ -1,0 +1,47 @@
+﻿@using Project3Vitour.Dtos.GuideDtos
+@model List<ResultGuideDto>
+
+<section class="team-member-page pd-main">
+    <div class="tf-container">
+        <div class="row mb-40">
+            <div class="col-lg-12">
+                <div class="center m0-auto w-text-heading">
+                    <span class="sub-title-heading text-main font-yes fs-28-46">Ekibimiz</span>
+                    <h2 class="title-heading">Deneyimli <span class="text-main font-yes">Rehberlerimiz</span> İle tanışın</h2>
+                </div>
+            </div>
+        </div>
+        <div class="team-member-grid">
+            @foreach (var item in Model)
+            {
+                <div class="tf-widget-team">
+                    <div class="team-image mb-15">
+                        <img src="@item.ImageUrl" alt="@item.FullName">
+                        <ul class="social-team">
+                            @if (!string.IsNullOrEmpty(item.Facebook))
+                            {
+                                <li><a href="@item.Facebook" target="_blank"><i class="icon-9"></i></a></li>
+                            }
+                            @if (!string.IsNullOrEmpty(item.Instagram))
+                            {
+                                <li><a href="@item.Instagram" target="_blank"><i class="icon-5"></i></a></li>
+                            }
+                            @if (!string.IsNullOrEmpty(item.LinkedIn))
+                            {
+                                <li><a href="@item.LinkedIn" target="_blank"><i class="icon-linkedin"></i></a></li>
+                            }
+                            @if (!string.IsNullOrEmpty(item.YouTube))
+                            {
+                                <li><a href="@item.YouTube" target="_blank"><i class="icon-youtube"></i></a></li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="team-content center">
+                        <p class="job">@item.Title</p>
+                        <h4 class="name"><a href="#">@item.FullName</a></h4>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

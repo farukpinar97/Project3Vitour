@@ -1,0 +1,20 @@
+﻿@{
+    string pageTitle = ViewBag.BreadcrumbTitle ?? "Sayfa";
+    string parentTitle = ViewBag.BreadcrumbParent ?? "Anasayfa";
+    string parentUrl = ViewBag.BreadcrumbParentUrl ?? "/";
+}
+
+<section class="breadcumb-section">
+    <div class="tf-container">
+        <div class="row">
+            <div class="col-lg-12 center z-index1">
+                <h1 class="title">@pageTitle</h1>
+                <ul class="breadcumb-list flex-five">
+                    <li><a href="@parentUrl">@parentTitle</a></li>
+                    <li><span>@pageTitle</span></li>
+                </ul>
+                <img class="bcrumb-ab" src="~/vitour/assets/images/page/mask-bcrumb.png" alt="">
+            </div>
+        </div>
+    </div>
+</section>

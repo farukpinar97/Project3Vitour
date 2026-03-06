@@ -1,0 +1,79 @@
+﻿<div class="mt--82 z-index3 relative">
+    <div class="tf-container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="search-form-widget-slider relative">
+                    <form action="/Tour/TourList" method="get" id="search-form-slider">
+                        <div class="flex wd-search">
+                            <div class="flex wd-search">
+
+                                <!-- Lokasyon -->
+                                <div class="form-group flex">
+                                    <i class="icon-18"></i>
+                                    <div class="search-bar-group">
+                                        <label>Lokasyon</label>
+                                        <input type="text" name="location"
+                                               placeholder="Şehir veya ülke..."
+                                               value="@Context.Request.Query["location"]">
+                                    </div>
+                                </div>
+
+                                <!-- Fiyat -->
+                                <div class="form-group flex">
+                                    <i class="icon-Vector6"></i>
+                                    <div class="search-bar-group">
+                                        <label>Fiyat (₺)</label>
+                                        <div style="display:flex; align-items:center; gap:4px;">
+                                            <input type="number" name="minPrice" placeholder="Min"
+                                                   value="@(Context.Request.Query["minPrice"].ToString() != "0" ? Context.Request.Query["minPrice"].ToString() : "")"
+                                                   style="width:120px;">
+                                            <input type="number" name="maxPrice" placeholder="Max"
+                                                   value="@(Context.Request.Query["maxPrice"].ToString() != "0" ? Context.Request.Query["maxPrice"].ToString() : "")"
+                                                   style="width:120px;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Süre -->
+                                <div class="form-group flex">
+                                    <i class="icon-time-left"></i>
+                                    <div class="search-bar-group">
+                                        <label>Süre (Gün)</label>
+                                        <div style="display:flex; align-items:center; gap:4px;">
+                                            <input type="number" name="minDay" placeholder="Min"
+                                                   value="@(Context.Request.Query["minDay"].ToString() != "0" ? Context.Request.Query["minDay"].ToString() : "")"
+                                                   style="width:90px;">
+                                            <input type="number" name="maxDay" placeholder="Max"
+                                                   value="@(Context.Request.Query["maxDay"].ToString() != "0" ? Context.Request.Query["maxDay"].ToString() : "")"
+                                                   style="width:90px;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Kişi Sayısı -->
+                                <div class="form-group flex">
+                                    <i class="icon-user"></i>
+                                    <div class="search-bar-group">
+                                        <label>Kişi Sayısı</label>
+                                        <input type="number" name="guests" min="0"
+                                               placeholder="0"
+                                               value="@(Context.Request.Query["guests"].ToString() != "0" ? Context.Request.Query["guests"].ToString() : "")">
+                                    </div>
+                                </div>
+
+                                <!-- Arama Butonu -->
+                                <div class="form-group flex-two">
+                                    <a href="#" class="btn-search" onclick="this.closest('form').submit(); return false;"
+                                       style="display:flex; align-items:center; gap:8px;">
+                                        <i class="icon-Vector5"></i> Ara
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,178 @@
+﻿@using Project3Vitour.Dtos.CategoryDtos
+@model List<ResultCategoryDto>
+@{
+    ViewBag.Title = "Kategoriler";
+    ViewBag.ActiveMenu = "categories";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string currentFilter = ViewBag.CurrentFilter ?? "all";
+}
+
+<style>
+    .filter-tab {
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 1.5px solid var(--border);
+        background: transparent;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all .2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .filter-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .filter-tab:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+</style>
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#dcfce7; color:#16a34a; padding:12px 20px; border-radius:8px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">
+            <i class="fa-solid fa-tag" style="color:var(--primary); margin-right:8px;"></i>
+            Kategori Listesi
+        </span>
+        <a asp-area="Admin" asp-controller="AdminCategory" asp-action="Create" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Yeni Kategori
+        </a>
+    </div>
+
+    <div class="card-body" style="padding-bottom:0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; gap:6px;">
+                <a href="?filter=all&page=1" class="filter-tab @(currentFilter == "all" ? "active" : "")">
+                    Tümü (@(ViewBag.TotalCount ?? 0))
+                </a>
+                <a href="?filter=active&page=1" class="filter-tab @(currentFilter == "active" ? "active" : "")">
+                    Aktif (@(ViewBag.ActiveCount ?? 0))
+                </a>
+                <a href="?filter=passive&page=1" class="filter-tab @(currentFilter == "passive" ? "active" : "")">
+                    Pasif (@(ViewBag.PassiveCount ?? 0))
+                </a>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" class="form-control" placeholder="Kategori ara..." id="categorySearch">
+            </div>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table id="categoryTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Kategori Adı</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var item = Model[i];
+                    <tr>
+                        <td class="text-muted" style="font-size:13px;">
+                            @((currentPage - 1) * 10 + i + 1)
+                        </td>
+                        <td class="fw-600">@item.CategoryName</td>
+                        <td>
+                            @if (item.CategoryStatus)
+                            {
+                                <span class="badge badge-green">
+                                    <i class="fa-solid fa-circle" style="font-size:7px;"></i> Aktif
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-red">
+                                    <i class="fa-solid fa-circle" style="font-size:7px;"></i> Pasif
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a asp-area="Admin" asp-controller="AdminCategory" asp-action="Update"
+                                   asp-route-id="@item.CategoryID"
+                                   class="btn btn-outline btn-sm btn-icon" title="Düzenle">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a asp-area="Admin" asp-controller="AdminCategory" asp-action="Delete"
+                                   asp-route-id="@item.CategoryID"
+                                   class="btn btn-danger btn-sm btn-icon" title="Sil"
+                                   onclick="return confirm('@item.CategoryName kategorisini silmek istediğinize emin misiniz?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Any())
+        {
+            <div style="text-align:center; padding:48px; color:var(--text-muted);">
+                <i class="fa-solid fa-tag" style="font-size:32px; margin-bottom:12px; display:block; opacity:.3;"></i>
+                Henüz kategori eklenmemiş.
+                <a asp-area="Admin" asp-controller="AdminCategory" asp-action="Create"
+                   style="color:var(--primary);">İlk kategoriyi ekleyin</a>
+            </div>
+        }
+
+        @if (totalPages > 1)
+        {
+            <div style="display:flex; justify-content:center; align-items:center; gap:8px; padding:20px;">
+                @if (currentPage > 1)
+                {
+                    <a href="?filter=@currentFilter&page=@(currentPage - 1)" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                }
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    string pageUrl = $"?filter={currentFilter}&page={i}";
+                    bool isActive = i == currentPage;
+                    <a href="@pageUrl"
+                       class="btn btn-sm @(isActive ? "" : "btn-outline")"
+                       style="@(isActive ? "background:var(--primary); color:white; border-color:var(--primary);" : "")">
+                        @i
+                    </a>
+                }
+                @if (currentPage < totalPages)
+                {
+                    <a href="?filter=@currentFilter&page=@(currentPage + 1)" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('categorySearch').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('#categoryTable tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}
